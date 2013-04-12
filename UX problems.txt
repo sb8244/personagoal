@@ -1,0 +1,12 @@
+UX problems that need to be solved:
+
+How will users regiser
+How will users login?
+
+How should task lists be presented?
+	Should there be a sticky left bar for instance, or maybe a popout leftbar which contains a list of all of the users lists
+
+How should the users information be presented?
+	Picture, name, etc
+	Should this just not be there, should it be in the sticky bar or popout?
+
