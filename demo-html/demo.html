@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+	<head>
+		<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+		<script src="//code.jquery.com/jquery-1.9.0.min.js"></script>
+		<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+		<style>
+			html { padding-top: 40px;}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="hero-unit text-center">
+				<h1>Hello Bootstrap</h1>
+			</div>
+			<div class="row">
+				<div class="span4 ">
+					<h2>One</h2>
+					<p>Content One</p>
+					<a href="#Popup-modal" role="button" class="btn" data-toggle="modal">Popup</a>
+					<div id="Popup-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+							<h3 id="myModalLabel">Popup Title</h3>
+						</div>
+						<div class="modal-body">
+							<p>Popup Content</p>
+						</div>
+						<div class="modal-footer">
+							<button class="btn btn-primary" data-dismiss="modal">Thanks!</button>
+						</div>
+					</div>
+				</div>
+				<div class="span4 ">
+					<h2>Two</h2>
+					<p>Content Two</p>
+				</div>
+				<div class="span4 ">
+					<h2>Three</h2>
+					<p>Content Three</p>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
