@@ -1,10 +1,13 @@
 UX problems that need to be solved:
 
-How will users regiser
+How will users register
 How will users login?
+	(Steve)I'm thinking that everyauth should be used alongside google email login. openid via everyauth is 
+	also viable. This would lead to a user not needing to register, but do everything by allowing a login.
 
 How should task lists be presented?
-	Should there be a sticky left bar for instance, or maybe a popout leftbar which contains a list of all of the users lists
+	Should there be a sticky left bar for instance, or maybe a popout leftbar which contains a list of all of 
+	the users lists
 
 How should the users information be presented?
 	Picture, name, etc
