@@ -1,7 +1,19 @@
 doctype 5
 html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    block content
+	head
+		title= title
+		link(href='http://fonts.googleapis.com/css?family=Noto+Sans', rel='stylesheet', type='text/css')
+		link(href='/stylesheets/bootstrap.min.css', rel='stylesheet')
+		link(rel='stylesheet', href='/stylesheets/style.css')
+	body
+	.left-sticky
+		.top
+			img(src='/images/persona.png')
+		.content.outer-scroll
+			.inner-scroll
+				h1.dark-bottom-border Header
+	.right-body.left-push
+		.top-sticky.left-push
+			span.bigger.padded-left The List
+		.content
+			block content

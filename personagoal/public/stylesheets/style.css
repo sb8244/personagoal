@@ -1,8 +1,88 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
+		html, body {
+			min-width: 800px;
+			width: 100%;
+			font-family: 'Noto Sans', sans-serif;
+		}
 
-a {
-  color: #00B7FF;
-}
+		/* Left */
+		.left-sticky {
+			position: fixed;
+			left:0px;
+			top: 0px;
+			bottom:0px;
+			width: 20%;
+			width: -moz-calc(250px);
+			width: calc(250px);
+			z-index: 100;
+			background: #222;
+			color: white;
+			height: 100%;
+		}
+		.left-sticky > .content {
+			padding-left: 10px;
+		}
+		.outer-scroll {
+			overflow: hidden;
+			height: 100%;
+		}
+		.inner-scroll {
+			overflow-y: scroll;
+			width: 125%;
+			width: calc(265px);
+			height: 100%;
+		}
+		.left-sticky > .top {
+			background: white;
+		}
+		.left-sticky > .top > img {
+			height: 40px;
+			display:block;
+			margin: 0 auto;
+			background: white;
+		}
+
+		/* Right */
+		.right-body {
+			position: absolute;
+			width: 100%;
+			width: -moz-calc(100% - 250px);
+			width: calc(100% - 250px);
+			min-width: 600px;
+			min-height:100%;
+			background: #eee;
+		}
+		.right-body > .top-sticky {
+			width:100%;
+			width: -moz-calc(100%);
+			width: calc(100%);
+			height: 40px;
+			line-height: 40px;
+			background: #fff;
+			position: fixed;
+			top: 0px;
+		}
+		.right-body > .content {
+			padding:15px;
+			margin-top: 40px;
+		}
+
+		/* Utility */
+		.left-push {
+			left: 20%;
+			left: -moz-calc(250px);
+			left: calc(250px);
+		}
+		.padded-left {
+			padding-left:5px;
+		}
+		.bigger {
+			font-size: 1.3em;
+		}
+		.box-size {
+			-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+			-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+			box-sizing: border-box;         /* Opera/IE 8+ */
+		}
+		.dark-bottom-border {
+			border-bottom: 1px solid #999;
+		}
