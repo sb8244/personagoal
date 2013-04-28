@@ -7,9 +7,9 @@ var MySQL = function(useTestDB) {
 		if(useTestDB === true)
 			databaseName = 'personagoal-test';
 		connection = mysql.createConnection({
-			host: data.host
-			user: data.user
-			password: data.password
+			host: data.host,
+			user: data.user,
+			password: data.password,
 			database: databaseName
 		});
 	});
