@@ -12,6 +12,6 @@
     "connect": "*",
     "forms": "*",
     "node-gyp": "*",
-    "bcrypt": "*"
+    "nodeunit": "*"
   }
 }
