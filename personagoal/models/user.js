@@ -1,6 +1,12 @@
-var mysql = require('./mysql');
-var connection = mysql.getConnection();
-exports.createNewUser = function(data, callback)
+var MySQL = require('./mysql').MySQL;
+
+var UserProvider = function() {
+	mysql = new MySQL();
+	console.log(mysql);
+	connection = mysql.getConnection();
+}
+
+UserProvider.prototype.createNewUser = function(data, callback)
 {
 	//Set the parameters for the user insertion
 	var userInsertParams = [
@@ -62,3 +68,6 @@ var regQueryFinal = function(callback, user_id) {
 		callback(null, user_id);
 	}
 }
+
+
+exports.UserProvider = UserProvider;
