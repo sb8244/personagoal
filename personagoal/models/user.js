@@ -1,8 +1,7 @@
 var MySQL = require('./mysql').MySQL;
 
-var UserProvider = function() {
-	mysql = new MySQL();
-	console.log(mysql);
+var UserProvider = function(useTestDB) {
+	mysql = new MySQL(useTestDB);
 	connection = mysql.getConnection();
 }
 
@@ -26,48 +25,46 @@ UserProvider.prototype.createNewUser = function(data, callback)
 			}
 		}
 	);
-}
 
-//This should happen AFTER the first insertion query
-var regQueryCallbacks = function ( data, callback, user_id ) {
-	var crypto = require('crypto');
-	var crypt = crypto.createHash('md5').update(data.password).digest("hex");
-	var userPasswordParams = [
-		user_id,
-		crypt
-	];
-	connection.query('INSERT INTO User_Password VALUES(?, ?)', userPasswordParams,
-		function(err, result) {
-			if( err ) throw err;
-			regQueryFinal(callback, user_id);
-		}
-	);
-	
-	var userDetailParams = [
-		user_id,
-		data.name,
-		data.role
-	];
-	connection.query('INSERT into User_Detail (user_id, name, role) values(?,?,?)', userDetailParams,
-		function(err, result) {
-			if( err ) throw err;
-			regQueryFinal(callback, user_id);
-		}
-	);
-	connection.end();
-}
+	//This should happen AFTER the first insertion query
+	var regQueryCallbacks = function ( data, callback, user_id ) {
+		var crypto = require('crypto');
+		var crypt = crypto.createHash('md5').update(data.password).digest("hex");
+		var userPasswordParams = [
+			user_id,
+			crypt
+		];
+		connection.query('INSERT INTO User_Password VALUES(?, ?)', userPasswordParams,
+			function(err, result) {
+				if( err ) throw err;
+				regQueryFinal(callback, user_id);
+			}
+		);
+		
+		var userDetailParams = [
+			user_id,
+			data.name,
+			data.role
+		];
+		connection.query('INSERT into User_Detail (user_id, name, role) values(?,?,?)', userDetailParams,
+			function(err, result) {
+				if( err ) throw err;
+				regQueryFinal(callback, user_id);
+			}
+		);
+	}
 
-/* 
- * Used to handle the callbacks for the insertion query
- */
-var queryCount = 0;
-var regQueryFinal = function(callback, user_id) {
-	queryCount ++;
-	if(queryCount == 2)
-	{
-		callback(null, user_id);
+	/* 
+	 * Used to handle the callbacks for the insertion query
+	 */
+	var queryCount = 0;
+	var regQueryFinal = function(callback, user_id) {
+		queryCount ++;
+		if(queryCount == 2)
+		{
+			callback(null, user_id);
+		}
 	}
 }
-
 
 exports.UserProvider = UserProvider;
