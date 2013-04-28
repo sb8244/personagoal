@@ -29,9 +29,10 @@ exports.process = function( req, res )
 	reg_form.handle(req, {
 		success: function( form ) 
 		{
-			var userModel = require("../models/user");
+			var UserProvider = require("../models/user").UserProvider;
+			var userProvider = new UserProvider();
 			//send the form data to the user model to create the user
-			userModel.createNewUser(form.data, function(err, result) {
+			userProvider.createNewUser(form.data, function(err, result) {
 				if(err)
 				{
 					if(err.email) {
