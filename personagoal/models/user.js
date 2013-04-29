@@ -67,4 +67,18 @@ UserProvider.prototype.createNewUser = function(data, callback)
 	}
 }
 
+UserProvider.prototype.checkLogin = function(email, password, callback) {
+	var crypto = require('crypto');
+	var cryptPass = crypto.createHash('md5').update(password).digest("hex");
+	var sqlStatement = 'SELECT * FROM User NATURAL JOIN User_Password WHERE email=? AND password=?';
+	var params = [ email, cryptPass ];
+	connection.query(sqlStatement, params,
+		function(err, result) {
+			if( err ) callback(false);
+			else if(result.length === 0) callback(false);
+			else if(result.length === 1) callback(result[0].user_id);
+		}
+	);
+}
+
 exports.UserProvider = UserProvider;
