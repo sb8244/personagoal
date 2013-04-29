@@ -1,6 +1,10 @@
 var UserProvider = require("./user").UserProvider;
 var MySQL = require('./mysql').MySQL;
+
 var testEmail = "testRegister@test.com";
+/*
+ * Group of testing that registers the user
+ */
 exports.testRegister = {
 	/*
 	 * We should clean up our test so we can test some mores
@@ -83,5 +87,98 @@ exports.testRegister = {
 				test.done();
 		}
 	}
-
 }
+
+/*
+ * Group of everything that checks the login
+ */
+exports.testCheckLogin = {
+	/*
+	 * Check that a valid login works
+	 */
+	testCheckLoginValid: function(test) {
+		test.expect(2);
+		var userProvider = new UserProvider(true);
+		mysql = new MySQL(true);
+		connection = mysql.getConnection();
+		var email = "checkLogin@test.com";
+		var params = [ email ];
+		connection.query('SELECT * FROM User WHERE email=?', params,
+			function(err, result) {
+				if( err ) {
+					throw ( err );
+				} else {
+					test.equal(result.length, 1, "Result empty, " + email + " must be present");
+					stepTwo();
+				}
+			}
+		);
+
+		var stepTwo = function() {
+			userProvider.checkLogin(email, "password", function(result) {
+				test.ok(result, "Login failed but should have passed");
+				test.done();
+			});
+		}
+	},
+
+	/*
+	 * Test that a valid email and invalid password fails
+	 */
+	testCheckLoginInvalidPassword: function(test) {
+		test.expect(2);
+		var userProvider = new UserProvider(true);
+		mysql = new MySQL(true);
+		connection = mysql.getConnection();
+		var email = "checkLogin@test.com";
+		var params = [ email ];
+		connection.query('SELECT * FROM User WHERE email=?', params,
+			function(err, result) {
+				if( err ) {
+					throw ( err );
+				} else {
+					test.equal(result.length, 1, "Result empty, " + email + " must be present");
+					stepTwo();
+				}
+			}
+		);
+
+		var stepTwo = function() {
+			userProvider.checkLogin(email, "passwordfail", function(result) {
+				test.ok(!result, "Login passed but should have failed");
+				test.done();
+			});
+		}
+	},
+
+	/*
+	 * Test that an invalid email and password which is valid for another fails
+	 */
+	testCheckLoginInvalidEmail: function(test) {
+		test.expect(2);
+		var userProvider = new UserProvider(true);
+		mysql = new MySQL(true);
+		connection = mysql.getConnection();
+		var email = "checkLogin@shouldnotexist.com";
+		var params = [ email ];
+		connection.query('SELECT * FROM User WHERE email=?', params,
+			function(err, result) {
+				if( err ) {
+					throw ( err );
+				} else {
+					test.equal(result.length, 0, "This email should not exist in the test db");
+					stepTwo();
+				}
+			}
+		);
+
+		var stepTwo = function() {
+			userProvider.checkLogin(email, "password", function(result) {
+				test.ok(!result, "Login passed but should have failed");
+				test.done();
+			});
+		}
+	},
+
+
+};
