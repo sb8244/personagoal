@@ -65,5 +65,5 @@ exports.process = function( req, res )
 				form: form.toHTML()
 			});
 		}
-	})
+	});
 }

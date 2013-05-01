@@ -29,3 +29,44 @@ exports.testValidLogin = function(test) {
 		test.done();
 	});
 }
+
+exports.testInvalidIsLoggedIn = function(test) {
+	req.session.user_id = undefined;
+	var login = new LoginProvider(true);
+	login.isLoggedIn(req, function(result) {
+		test.equal(result, false);
+		test.done();
+	});
+}
+
+exports.testValidIsLoggedIn = function(test) {
+	req.session.user_id = 1;
+	var login = new LoginProvider(true);
+	login.isLoggedIn(req, function(result) {
+		test.equal(result, true);	
+		req.session.user_id = undefined;
+		test.done();
+	});
+}
+
+exports.testLogoutAlreadyOut = function(test) {
+	req.session.user_id = undefined;
+	var login = new LoginProvider(true);
+	login.logout(req, function() {
+		login.isLoggedIn(req, function(result) {
+			test.equal(result, false);
+			test.done();
+		});
+	});
+}
+
+exports.testLogoutLoggedIn = function(test) {
+	req.session.user_id = 1;
+	var login = new LoginProvider(true);
+	login.logout(req, function() {
+		login.isLoggedIn(req, function(result) {
+			test.equal(result, false);
+			test.done();
+		});
+	});
+}
