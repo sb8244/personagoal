@@ -21,6 +21,38 @@ exports.insert = {
 	},
 
 	taskLinkUser: function(test) {
-		test.done();
+		test.expect(2);
+		var taskProvider = new TaskProvider(true);
+		//these are constants in the test database and should not be deleted
+		var user_id = 1;
+		var task_id = 2;
+		taskProvider.linkUserToTask(user_id, task_id, function(err, result) {
+			test.equals(result, true, "Result should be true");
+			test.equals(err, null, "Err should be null");
+			connection.query('DELETE FROM User_Task WHERE user_id = ? AND task_id = ?', [user_id, task_id], 
+			function() {
+				test.done();
+			});
+		});
+	},
+
+	taskLinkUserDuplicate: function(test) {
+		test.expect(4);
+		var taskProvider = new TaskProvider(true);
+		//these are constants in the test database and should not be deleted
+		var user_id = 1;
+		var task_id = 2;
+		taskProvider.linkUserToTask(user_id, task_id, function(err, result) {
+			test.equals(result, true, "Result should be true");
+			taskProvider.linkUserToTask(user_id, task_id, function(errInner, resultInner) {
+				test.equals(resultInner, null, "Result should be null");
+				test.equals(errInner.task, "duplicate", "Error.task should be duplicate");
+				test.notEqual(errInner, null, "Err should not be null");
+				connection.query('DELETE FROM User_Task WHERE user_id = ? AND task_id = ?', [user_id, task_id], 
+				function() {
+					test.done();
+				});
+			});
+		});
 	}
 };
