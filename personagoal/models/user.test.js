@@ -89,6 +89,29 @@ exports.testRegister = {
 	}
 }
 
+exports.testDeleteUser = {
+	testUserIsDeleted: function(test) {
+		test.expect(2);
+		var userProvider = new UserProvider(true);
+		mysql = new MySQL(true);
+		connection = mysql.getConnection();
+		insertParams = {
+				name: "testRegister",
+				role: "tester",
+				email: testEmail,
+				password: "password"
+		};
+		//This is already tested above, so can be assumed valid
+		userProvider.createNewUser(insertParams, function(err, id) {
+			userProvider.removeUser(id, function(err, result) {
+				test.equals(result, true);
+				test.equals(err, null);
+				test.done();
+			});
+		});
+	}
+}
+
 /*
  * Group of everything that checks the login
  */

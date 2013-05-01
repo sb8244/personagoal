@@ -9,6 +9,8 @@ var express = require('express')
   , path = require('path');
 
 var app = express();
+global.debug = true;
+app.set('env', 'development');
 
 // all environments
 app.set('port', process.env.PORT || 3000);

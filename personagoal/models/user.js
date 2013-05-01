@@ -15,11 +15,11 @@ UserProvider.prototype.createNewUser = function(data, callback)
 	//and this table must be populated first
 	connection.query('INSERT INTO User(email) VALUES(?)', userInsertParams,
 		function(err, result) {
-			//If there was a duplicate entry, alert the router
+			//If there was a duplicate entry, alert the callback
 			if(err && err.code == 'ER_DUP_ENTRY') {
 				callback({email: "duplicate"}, null);
 			} else if( err ) {
-				throw ( err );
+				callback ( err , null );
 			} else {
 				regQueryCallbacks(data, callback, result.insertId);
 			}
@@ -65,6 +65,21 @@ UserProvider.prototype.createNewUser = function(data, callback)
 			callback(null, user_id);
 		}
 	}
+}
+
+UserProvider.prototype.removeUser = function(user_id, callback) {
+	var params = [
+		user_id
+	];
+	connection.query('DELETE FROM User WHERE user_id = ?', params,
+	function(err, result) {
+		//If there was a duplicate entry, alert the callback
+		if(err) {
+			callback ( err , null);
+		} else {
+			callback(null, true);
+		}
+	});
 }
 
 UserProvider.prototype.checkLogin = function(email, password, callback) {
