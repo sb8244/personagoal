@@ -44,4 +44,19 @@ TaskProvider.prototype.linkUserToTask = function(user_id, task_id, callback) {
 	});
 }
 
+TaskProvider.prototype.getTasksForUser = function(user_id, callback) {
+	var params = [
+		user_id
+	];
+	connection.query('SELECT * FROM User NATURAL JOIN User_Task NATURAL JOIN Task', params,
+	function(err, result) {
+		//If there was a duplicate entry, alert the callback
+		if( err ) {
+			callback ( err , null);
+		} else {
+			callback(null, result);
+		}
+	});
+}
+
 exports.TaskProvider = TaskProvider;

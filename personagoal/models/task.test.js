@@ -56,3 +56,26 @@ exports.insert = {
 		});
 	}
 };
+
+exports.get = {
+	getUserTasks: function(test) {
+		test.expect(5);
+		var taskProvider = new TaskProvider(true);
+		//these are constants in the test database and should not be deleted
+		var user_id = 1;
+		var task_id = 2;
+		taskProvider.linkUserToTask(user_id, task_id, function(err, result) {
+			test.equals(result, true, "Result should be true");
+			taskProvider.getTasksForUser(user_id, function(err, result) {
+				test.equals(err, null, "Err should be null");
+				test.equals(result[0].task_id, 2, "Task ID should be 2");
+				test.equals(result[0].user_id, 1, "User ID should be 1");
+				test.equals(result.length, 1, "Should be 1 result");
+				connection.query('DELETE FROM User_Task WHERE user_id = ? AND task_id = ?', [user_id, task_id], 
+				function() {
+					test.done();
+				});
+			});
+		});
+	}
+};
