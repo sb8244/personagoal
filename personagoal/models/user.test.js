@@ -10,7 +10,7 @@ exports.testRegister = {
 	 * We should clean up our test so we can test some mores
 	 */
 	tearDown: function(callback){
-		mysql = new MySQL(true);
+		mysql = new MySQL();
 		params = [testEmail];
 		mysql.getConnection(function( connection ) {
 			connection.query('DELETE FROM User WHERE email=?', params, function() {
@@ -26,8 +26,8 @@ exports.testRegister = {
 	 */
 	testRegister: function(test) {
 		test.expect(10);
-		var userProvider = new UserProvider(true);
-		mysql = new MySQL(true);
+		var userProvider = new UserProvider();
+		mysql = new MySQL();
 		params = [testEmail];
 		mysql.getConnection(function( connection ) {
 			connection.query('SELECT * FROM User WHERE email=?', params,
@@ -105,8 +105,8 @@ exports.testRegister = {
 exports.testDeleteUser = {
 	testUserIsDeleted: function(test) {
 		test.expect(2);
-		var userProvider = new UserProvider(true);
-		mysql = new MySQL(true);
+		var userProvider = new UserProvider();
+		mysql = new MySQL();
 		insertParams = {
 				name: "testRegister",
 				role: "tester",
@@ -133,8 +133,8 @@ exports.testCheckLogin = {
 	 */
 	testCheckLoginValid: function(test) {
 		test.expect(2);
-		var userProvider = new UserProvider(true);
-		mysql = new MySQL(true);
+		var userProvider = new UserProvider();
+		mysql = new MySQL();
 		var email = "checkLogin@test.com";
 		var params = [ email ];
 		mysql.getConnection(function( connection ) {
@@ -164,8 +164,8 @@ exports.testCheckLogin = {
 	 */
 	testCheckLoginInvalidPassword: function(test) {
 		test.expect(2);
-		var userProvider = new UserProvider(true);
-		mysql = new MySQL(true);
+		var userProvider = new UserProvider();
+		mysql = new MySQL();
 		var email = "checkLogin@test.com";
 		var params = [ email ];
 		mysql.getConnection(function( connection ) {
@@ -194,8 +194,8 @@ exports.testCheckLogin = {
 	 */
 	testCheckLoginInvalidEmail: function(test) {
 		test.expect(2);
-		var userProvider = new UserProvider(true);
-		mysql = new MySQL(true);
+		var userProvider = new UserProvider();
+		mysql = new MySQL();
 		var email = "checkLogin@shouldnotexist.com";
 		var params = [ email ];
 		mysql.getConnection(function( connection ) {

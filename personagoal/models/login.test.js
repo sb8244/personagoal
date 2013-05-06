@@ -8,7 +8,7 @@ global.req.session = {};
  * This login is invalid, should return false and not change the session
  */
 exports.testInvalidLogin = function(test) {
-	var login = new LoginProvider(true);
+	var login = new LoginProvider();
 	test.equal(req.session.user_id, undefined, "Session isn't empty");
 	login.login("1","1", req, function(result) {
 		test.equal(result, false, "Result should be false");
@@ -21,7 +21,7 @@ exports.testInvalidLogin = function(test) {
  * This login is valid, should return true and set the user_id in the session
  */
 exports.testValidLogin = function(test) {
-	var login = new LoginProvider(true);
+	var login = new LoginProvider();
 	test.equal(req.session.user_id, undefined, "Session isn't empty");
 	login.login("checkLogin@test.com","password", req, function(result) {
 		test.equal(result, true, "Result should be true");
@@ -32,7 +32,7 @@ exports.testValidLogin = function(test) {
 
 exports.testInvalidIsLoggedIn = function(test) {
 	req.session.user_id = undefined;
-	var login = new LoginProvider(true);
+	var login = new LoginProvider();
 	login.isLoggedIn(req, function(result) {
 		test.equal(result, false);
 		test.done();
@@ -41,7 +41,7 @@ exports.testInvalidIsLoggedIn = function(test) {
 
 exports.testValidIsLoggedIn = function(test) {
 	req.session.user_id = 1;
-	var login = new LoginProvider(true);
+	var login = new LoginProvider();
 	login.isLoggedIn(req, function(result) {
 		test.equal(result, true);	
 		req.session.user_id = undefined;
@@ -51,7 +51,7 @@ exports.testValidIsLoggedIn = function(test) {
 
 exports.testLogoutAlreadyOut = function(test) {
 	req.session.user_id = undefined;
-	var login = new LoginProvider(true);
+	var login = new LoginProvider();
 	login.logout(req, function() {
 		login.isLoggedIn(req, function(result) {
 			test.equal(result, false);
@@ -62,7 +62,7 @@ exports.testLogoutAlreadyOut = function(test) {
 
 exports.testLogoutLoggedIn = function(test) {
 	req.session.user_id = 1;
-	var login = new LoginProvider(true);
+	var login = new LoginProvider();
 	login.logout(req, function() {
 		login.isLoggedIn(req, function(result) {
 			test.equal(result, false);

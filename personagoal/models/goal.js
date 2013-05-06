@@ -1,7 +1,7 @@
 var MySQL = require('./mysql').MySQL;
 
-var GoalProvider = function(useTestDB) {
-	mysql = new MySQL(useTestDB);
+var GoalProvider = function() {
+	mysql = new MySQL();
 }
 
 GoalProvider.prototype.createGoal = function(due_date, task_id, callback) {

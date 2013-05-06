@@ -22,7 +22,6 @@ $ ./runtests.js foobar.test.js my_directory
 */
  
 //require.paths.unshift('./vendor/nodeunit/lib');
- 
 var fs = require('fs'),
     sys = require('sys'),
     args = process.argv,
@@ -30,6 +29,7 @@ var fs = require('fs'),
     start = new Date(),
     end, tests = [], i;
  
+global.testing = true;
 try {
     var testrunner = require('nodeunit').testrunner;
 } catch(e) {

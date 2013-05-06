@@ -1,10 +1,10 @@
 var mysql = require('mysql');
 var config = require('./config');
 
-var MySQL = function(useTestDB) {
+var MySQL = function() {
 	config.getConfiguration(function(data) {
 		var databaseName = 'personagoal';
-		if(useTestDB === true)
+		if(global.testing === true)
 			databaseName = 'personagoal-test';
 		pool  = mysql.createPool({
 			host     : data.host,

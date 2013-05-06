@@ -1,7 +1,7 @@
 var MySQL = require('./mysql').MySQL;
 
-var TaskProvider = function(useTestDB) {
-	mysql = new MySQL(useTestDB);
+var TaskProvider = function() {
+	mysql = new MySQL();
 }
 
 /*

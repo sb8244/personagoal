@@ -1,11 +1,10 @@
 var UserProvider = require("./user").UserProvider;
 
-var LoginProvider = function(useTestDB) {
-	testDB = useTestDB;
+var LoginProvider = function() {
 }
 
 LoginProvider.prototype.login = function(email, password, req, callback) {
-	var userProvider = new UserProvider(testDB);
+	var userProvider = new UserProvider();
 	userProvider.checkLogin(email, password, function(result) {
 		if(result === false) {
 			callback(false);

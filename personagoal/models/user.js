@@ -1,7 +1,7 @@
 var MySQL = require('./mysql').MySQL;
 
-var UserProvider = function(useTestDB) {
-	mysql = new MySQL(useTestDB);
+var UserProvider = function() {
+	mysql = new MySQL();
 }
 
 UserProvider.prototype.createNewUser = function(data, callback)
