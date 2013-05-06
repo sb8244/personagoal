@@ -26,37 +26,4 @@ TaskProvider.prototype.createTask = function(data, callback) {
 	});
 }
 
-TaskProvider.prototype.linkUserToTask = function(user_id, task_id, callback) {
-	var insertParams = [
-		user_id,
-		task_id
-	];
-	connection.query('INSERT INTO User_Task VALUES(?, ?)', insertParams,
-	function(err, result) {
-		//If there was a duplicate entry, alert the callback
-		if(err && err.code == 'ER_DUP_ENTRY') {
-			callback({task: "duplicate"}, null);
-		} else if( err ) {
-			callback ( err , null);
-		} else {
-			callback(null, true);
-		}
-	});
-}
-
-TaskProvider.prototype.getTasksForUser = function(user_id, callback) {
-	var params = [
-		user_id
-	];
-	connection.query('SELECT * FROM User NATURAL JOIN User_Task NATURAL JOIN Task', params,
-	function(err, result) {
-		//If there was a duplicate entry, alert the callback
-		if( err ) {
-			callback ( err , null);
-		} else {
-			callback(null, result);
-		}
-	});
-}
-
 exports.TaskProvider = TaskProvider;
