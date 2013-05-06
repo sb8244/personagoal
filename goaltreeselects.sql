@@ -22,7 +22,7 @@ SELECT * FROM
 
 	SELECT DISTINCT User_Goal.user_id, GoalTreeChildren.goal_id as goal_id, title, due_date, null as parent_id, GoalTreeChildren.child_id as child_id, root FROM User_Goal
 		JOIN GoalTreeChildren ON User_Goal.goal_id = GoalTreeChildren.child_id
-		JOIN Goal ON GoalTreeChildren.child_id = Goal.goal_id
+		JOIN Goal ON GoalTreeChildren.goal_id = Goal.goal_id
 		JOIN Task ON Goal.task_id = Task.task_id 
 		WHERE User_Goal.user_id = 1
 
