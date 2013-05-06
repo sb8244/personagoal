@@ -4,7 +4,6 @@ var MySQL = require('./mysql').MySQL;
 exports.insert = {
 	goalInsert: function(test) {
 		var mysql = new MySQL(true);
-		var connection = mysql.getConnection();
 		test.expect(2);
 		var task_id = 0;
 		var due_date = new Date();
@@ -12,8 +11,11 @@ exports.insert = {
 		goalProvider.createGoal(due_date, task_id, function(err, result) {
 			test.equals(err, null, "Error should be null");
 			test.notEqual(result, null, "Result should not be null");
-			connection.query('DELETE FROM Goal WHERE goal_id = ?', [result], function(err, result) {
-				test.done();
+			mysql.getConnection(function( connection ) {
+				connection.query('DELETE FROM Goal WHERE goal_id = ?', [result], function(err, result) {
+					connection.end();
+					test.done();
+				});
 			});
 		});
 	},
@@ -27,9 +29,12 @@ exports.insert = {
 		goalProvider.linkUserToGoal(user_id, goal_id, function(err, result) {
 			test.equals(result, true, "Result should be true");
 			test.equals(err, null, "Err should be null");
-			connection.query('DELETE FROM User_Goal WHERE user_id = ? AND goal_id = ?', [user_id, goal_id], 
-			function() {
-				test.done();
+			mysql.getConnection(function( connection ) {
+				connection.query('DELETE FROM User_Goal WHERE user_id = ? AND goal_id = ?', [user_id, goal_id], 
+				function() {
+					connection.end();
+					test.done();
+				});
 			});
 		});
 	},
@@ -46,9 +51,12 @@ exports.insert = {
 				test.equals(resultInner, null, "Result should be null");
 				test.equals(errInner.msg, "duplicate", "Error.msg should be duplicate");
 				test.notEqual(errInner, null, "Err should not be null");
-				connection.query('DELETE FROM User_Goal WHERE user_id = ? AND goal_id = ?', [user_id, goal_id], 
-				function() {
-					test.done();
+				mysql.getConnection(function( connection ) {
+					connection.query('DELETE FROM User_Goal WHERE user_id = ? AND goal_id = ?', [user_id, goal_id], 
+					function() {
+						connection.end();
+						test.done();
+					});
 				});
 			});
 		});

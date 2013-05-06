@@ -6,19 +6,24 @@ var MySQL = function(useTestDB) {
 		var databaseName = 'personagoal';
 		if(useTestDB === true)
 			databaseName = 'personagoal-test';
-		connection = mysql.createConnection({
-			host: data.host,
-			user: data.user,
-			password: data.password,
-			database: databaseName
+		pool  = mysql.createPool({
+			host     : data.host,
+			user     : data.user,
+			password : data.password,
+			database : databaseName
 		});
 	});
 }
 
 
-MySQL.prototype.getConnection = function() {
-	connection.connect();
-	return connection;
+MySQL.prototype.getConnection = function(callback) {
+	pool.getConnection(function(err, connection) {
+		if(err == null) {
+			callback(connection);
+		} else {
+			throw new Error(err);
+		}
+	});
 }
 
 exports.MySQL = MySQL;

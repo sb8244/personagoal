@@ -11,10 +11,12 @@ exports.testRegister = {
 	 */
 	tearDown: function(callback){
 		mysql = new MySQL(true);
-		connection = mysql.getConnection();
 		params = [testEmail];
-		connection.query('DELETE FROM User WHERE email=?', params, function() {
-			callback();
+		mysql.getConnection(function( connection ) {
+			connection.query('DELETE FROM User WHERE email=?', params, function() {
+				connection.end();
+				callback();
+			});
 		});
 	},
 	/*
@@ -26,18 +28,20 @@ exports.testRegister = {
 		test.expect(10);
 		var userProvider = new UserProvider(true);
 		mysql = new MySQL(true);
-		connection = mysql.getConnection();
 		params = [testEmail];
-		connection.query('SELECT * FROM User WHERE email=?', params,
-			function(err, result) {
-				if( err ) {
-					throw ( err );
-				} else {
-					test.equal(result.length, 0, "Result not empty");
-					stepTwo();
+		mysql.getConnection(function( connection ) {
+			connection.query('SELECT * FROM User WHERE email=?', params,
+				function(err, result) {
+					connection.end();
+					if( err ) {
+						throw ( err );
+					} else {
+						test.equal(result.length, 0, "Result not empty");
+						stepTwo();
+					}
 				}
-			}
-		);
+			);
+		});
 
 		var stepTwo = function() {
 			insertParams = {
@@ -47,35 +51,44 @@ exports.testRegister = {
 				password: "password"
 			};
 			userProvider.createNewUser(insertParams, function(err, id) {
-				connection.query('SELECT * FROM User WHERE email=?', params, function(err, result) {
-					if( err ) {
-						throw ( err );
-					} else {
-						test.equal(result.length, 1, "Result empty");
-						test.equal(result[0].email, insertParams.email, "Email not equal");
-						test.equal(result[0].user_id, id, "ID isn't matching up");
-						stepCall();
-					}
+				mysql.getConnection(function( connection ) {
+					connection.query('SELECT * FROM User WHERE email=?', params, function(err, result) {
+						connection.end();
+						if( err ) {
+							throw ( err );
+						} else {
+							test.equal(result.length, 1, "Result empty");
+							test.equal(result[0].email, insertParams.email, "Email not equal");
+							test.equal(result[0].user_id, id, "ID isn't matching up");
+							stepCall();
+						}
+					});
 				});
-				connection.query('SELECT * FROM User_Detail WHERE user_id=?', [id], function(err, result) {
-					if( err ) {
-						throw ( err );
-					} else {
-						test.equal(result.length, 1, "Result empty");
-						test.equal(result[0].name, insertParams.name, "Name not equal");
-						test.equal(result[0].role, insertParams.role, "Role not equal");
-						test.equal(result[0].image_path, null, "Image Path isn't null");
-						stepCall();
-					}
+				mysql.getConnection(function( connection ) {
+					connection.query('SELECT * FROM User_Detail WHERE user_id=?', [id], function(err, result) {
+						connection.end();
+						if( err ) {
+							throw ( err );
+						} else {
+							test.equal(result.length, 1, "Result empty");
+							test.equal(result[0].name, insertParams.name, "Name not equal");
+							test.equal(result[0].role, insertParams.role, "Role not equal");
+							test.equal(result[0].image_path, null, "Image Path isn't null");
+							stepCall();
+						}
+					});
 				});
-				connection.query('SELECT * FROM User_Password WHERE user_id=?', [id], function(err, result) {
-					if( err ) {
-						throw ( err );
-					} else {
-						test.equal(result.length, 1, "Result empty");
-						test.equal(result[0].password, '5f4dcc3b5aa765d61d8327deb882cf99', "Password-md5 not equal");
-						stepCall();
-					}
+				mysql.getConnection(function( connection ) {
+					connection.query('SELECT * FROM User_Password WHERE user_id=?', [id], function(err, result) {
+						connection.end();
+						if( err ) {
+							throw ( err );
+						} else {
+							test.equal(result.length, 1, "Result empty");
+							test.equal(result[0].password, '5f4dcc3b5aa765d61d8327deb882cf99', "Password-md5 not equal");
+							stepCall();
+						}
+					});
 				});
 			});
 		}
@@ -94,7 +107,6 @@ exports.testDeleteUser = {
 		test.expect(2);
 		var userProvider = new UserProvider(true);
 		mysql = new MySQL(true);
-		connection = mysql.getConnection();
 		insertParams = {
 				name: "testRegister",
 				role: "tester",
@@ -123,19 +135,21 @@ exports.testCheckLogin = {
 		test.expect(2);
 		var userProvider = new UserProvider(true);
 		mysql = new MySQL(true);
-		connection = mysql.getConnection();
 		var email = "checkLogin@test.com";
 		var params = [ email ];
-		connection.query('SELECT * FROM User WHERE email=?', params,
-			function(err, result) {
-				if( err ) {
-					throw ( err );
-				} else {
-					test.equal(result.length, 1, "Result empty, " + email + " must be present");
-					stepTwo();
+		mysql.getConnection(function( connection ) {
+			connection.query('SELECT * FROM User WHERE email=?', params,
+				function(err, result) {
+					connection.end();
+					if( err ) {
+						throw ( err );
+					} else {
+						test.equal(result.length, 1, "Result empty, " + email + " must be present");
+						stepTwo();
+					}
 				}
-			}
-		);
+			);
+		});
 
 		var stepTwo = function() {
 			userProvider.checkLogin(email, "password", function(result) {
@@ -152,20 +166,21 @@ exports.testCheckLogin = {
 		test.expect(2);
 		var userProvider = new UserProvider(true);
 		mysql = new MySQL(true);
-		connection = mysql.getConnection();
 		var email = "checkLogin@test.com";
 		var params = [ email ];
-		connection.query('SELECT * FROM User WHERE email=?', params,
-			function(err, result) {
-				if( err ) {
-					throw ( err );
-				} else {
-					test.equal(result.length, 1, "Result empty, " + email + " must be present");
-					stepTwo();
+		mysql.getConnection(function( connection ) {
+			connection.query('SELECT * FROM User WHERE email=?', params,
+				function(err, result) {
+					connection.end();
+					if( err ) {
+						throw ( err );
+					} else {
+						test.equal(result.length, 1, "Result empty, " + email + " must be present");
+						stepTwo();
+					}
 				}
-			}
-		);
-
+			);
+		});
 		var stepTwo = function() {
 			userProvider.checkLogin(email, "passwordfail", function(result) {
 				test.ok(!result, "Login passed but should have failed");
@@ -181,20 +196,21 @@ exports.testCheckLogin = {
 		test.expect(2);
 		var userProvider = new UserProvider(true);
 		mysql = new MySQL(true);
-		connection = mysql.getConnection();
 		var email = "checkLogin@shouldnotexist.com";
 		var params = [ email ];
-		connection.query('SELECT * FROM User WHERE email=?', params,
-			function(err, result) {
-				if( err ) {
-					throw ( err );
-				} else {
-					test.equal(result.length, 0, "This email should not exist in the test db");
-					stepTwo();
+		mysql.getConnection(function( connection ) {
+			connection.query('SELECT * FROM User WHERE email=?', params,
+				function(err, result) {
+					connection.end();
+					if( err ) {
+						throw ( err );
+					} else {
+						test.equal(result.length, 0, "This email should not exist in the test db");
+						stepTwo();
+					}
 				}
-			}
-		);
-
+			);
+		});
 		var stepTwo = function() {
 			userProvider.checkLogin(email, "password", function(result) {
 				test.ok(!result, "Login passed but should have failed");
