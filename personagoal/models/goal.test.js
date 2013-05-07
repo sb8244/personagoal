@@ -1,13 +1,10 @@
-var GoalProvider = require("./goal").GoalProvider;
-var MySQL = require('./mysql').MySQL;
-
+var goalProvider = require("./goal");
+var mysql = require('./mysql');
 exports.insert = {
 	goalInsert: function(test) {
-		var mysql = new MySQL();
 		test.expect(2);
 		var task_id = 0;
 		var due_date = new Date();
-		var goalProvider = new GoalProvider();
 		goalProvider.createGoal(due_date, task_id, function(err, result) {
 			test.equals(err, null, "Error should be null");
 			test.notEqual(result, null, "Result should not be null");
@@ -22,7 +19,6 @@ exports.insert = {
 
 	goalLinkUser: function(test) {
 		test.expect(2);
-		var goalProvider = new GoalProvider();
 		//these are constants in the test database and should not be deleted
 		var user_id = 1;
 		var goal_id = 0;
@@ -41,7 +37,6 @@ exports.insert = {
 
 	goalLinkUserDuplicate: function(test) {
 		test.expect(4);
-		var goalProvider = new GoalProvider();
 		//these are constants in the test database and should not be deleted
 		var user_id = 1;
 		var goal_id = 0;

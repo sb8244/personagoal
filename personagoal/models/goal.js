@@ -1,10 +1,7 @@
-var MySQL = require('./mysql').MySQL;
+var mysql = require('./mysql');
 
-var GoalProvider = function() {
-	mysql = new MySQL();
-}
 
-GoalProvider.prototype.createGoal = function(due_date, task_id, callback) {
+exports.createGoal = function(due_date, task_id, callback) {
 	var params = [
 		due_date,
 		task_id
@@ -15,17 +12,17 @@ GoalProvider.prototype.createGoal = function(due_date, task_id, callback) {
 			connection.end();
 			//If there was a duplicate entry, alert the callback
 			if(err && err.code == 'ER_DUP_ENTRY') {
-				callback({goal: "duplicate"}, null);
+				return callback({goal: "duplicate"}, null);
 			} else if( err ) {
-				callback ( err , null);
+				return callback ( err , null);
 			} else {
-				callback(null, result.insertId);
+				return callback(null, result.insertId);
 			}
 		});
 	});
 }
 
-GoalProvider.prototype.linkUserToGoal = function(user_id, goal_id, callback) {
+exports.linkUserToGoal = function(user_id, goal_id, callback) {
 	var params = [
 		user_id,
 		goal_id
@@ -36,14 +33,12 @@ GoalProvider.prototype.linkUserToGoal = function(user_id, goal_id, callback) {
 			connection.end();
 			//If there was a duplicate entry, alert the callback
 			if(err && err.code == 'ER_DUP_ENTRY') {
-				callback({msg: "duplicate"}, null);
+				return callback({msg: "duplicate"}, null);
 			} else if( err ) {
-				callback ( err , null);
+				return callback ( err , null);
 			} else {
-				callback(null, true);
+				return callback(null, true);
 			}
 		});
 	});
 }
-
-exports.GoalProvider = GoalProvider;

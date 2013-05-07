@@ -1,15 +1,13 @@
-var TaskProvider = require("./task").TaskProvider;
-var MySQL = require('./mysql').MySQL;
+var taskProvider = require("./task");
+var mysql = require('./mysql');
 
 exports.insert = {
 	taskInsert: function(test) {
-		var mysql = new MySQL();
 		test.expect(2);
 		var data = { 
 			title: "Test Title",
 			description: "Test"
 		};
-		var taskProvider = new TaskProvider();
 		taskProvider.createTask(data, function(err, result) {
 			test.equals(err, null, "Error should be null");
 			test.notEqual(result, null, "Result should not be null");

@@ -1,13 +1,9 @@
-var MySQL = require('./mysql').MySQL;
-
-var TaskProvider = function() {
-	mysql = new MySQL();
-}
+var mysql = require('./mysql');
 
 /*
  * Insert into the Task table (title, description) and callback with the insertion id
  */
-TaskProvider.prototype.createTask = function(data, callback) {
+ exports.createTask = function(data, callback) {
 	var taskInsertParams = [
 		data.title,
 		data.description
@@ -18,14 +14,12 @@ TaskProvider.prototype.createTask = function(data, callback) {
 			connection.end();
 			//If there was a duplicate entry, alert the callback
 			if(err && err.code == 'ER_DUP_ENTRY') {
-				callback({task: "duplicate"}, null);
+				return callback({task: "duplicate"}, null);
 			} else if( err ) {
-				callback ( err , null);
+				return callback ( err , null);
 			} else {
-				callback(null, result.insertId);
+				return callback(null, result.insertId);
 			}
 		});
 	});
 }
-
-exports.TaskProvider = TaskProvider;

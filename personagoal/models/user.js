@@ -1,10 +1,7 @@
-var MySQL = require('./mysql').MySQL;
+var mysql = require('./mysql');
 
-var UserProvider = function() {
-	mysql = new MySQL();
-}
 
-UserProvider.prototype.createNewUser = function(data, callback)
+exports.createNewUser = function(data, callback)
 {
 	//Set the parameters for the user insertion
 	var userInsertParams = [
@@ -18,15 +15,16 @@ UserProvider.prototype.createNewUser = function(data, callback)
 				connection.end();
 				//If there was a duplicate entry, alert the callback
 				if(err && err.code == 'ER_DUP_ENTRY') {
-					callback({email: "duplicate"}, null);
+					return callback({email: "duplicate"}, null);
 				} else if( err ) {
-					callback ( err , null );
+					return callback ( err , null );
 				} else {
-					regQueryCallbacks(data, callback, result.insertId);
+					return regQueryCallbacks(data, callback, result.insertId);
 				}
 			}
 		);
 	});
+	
 	//This should happen AFTER the first insertion query
 	var regQueryCallbacks = function ( data, callback, user_id ) {
 		var crypto = require('crypto');
@@ -69,12 +67,12 @@ UserProvider.prototype.createNewUser = function(data, callback)
 		queryCount ++;
 		if(queryCount == 2)
 		{
-			callback(null, user_id);
+			return callback(null, user_id);
 		}
 	}
 }
 
-UserProvider.prototype.removeUser = function(user_id, callback) {
+exports.removeUser = function(user_id, callback) {
 	var params = [
 		user_id
 	];
@@ -84,15 +82,15 @@ UserProvider.prototype.removeUser = function(user_id, callback) {
 			connection.end();
 			//If there was a duplicate entry, alert the callback
 			if(err) {
-				callback ( err , null);
+				return callback ( err , null);
 			} else {
-				callback(null, true);
+				return callback(null, true);
 			}
 		});
 	});
 }
 
-UserProvider.prototype.checkLogin = function(email, password, callback) {
+exports.checkLogin = function(email, password, callback) {
 	var crypto = require('crypto');
 	var cryptPass = crypto.createHash('md5').update(password).digest("hex");
 	var sqlStatement = 'SELECT * FROM User NATURAL JOIN User_Password WHERE email=? AND password=?';
@@ -101,12 +99,10 @@ UserProvider.prototype.checkLogin = function(email, password, callback) {
 		connection.query(sqlStatement, params,
 			function(err, result) {
 				connection.end();
-				if( err ) callback(false);
-				else if(result.length === 0) callback(false);
-				else if(result.length === 1) callback(result[0].user_id);
+				if( err ) return callback(false);
+				else if(result.length === 0) return callback(false);
+				else if(result.length === 1) return callback(result[0].user_id);
 			}
 		);
 	});
 }
-
-exports.UserProvider = UserProvider;

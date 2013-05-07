@@ -1,29 +1,23 @@
-var UserProvider = require("./user").UserProvider;
+var userProvider = require("./user");
 
-var LoginProvider = function() {
-}
-
-LoginProvider.prototype.login = function(email, password, req, callback) {
-	var userProvider = new UserProvider();
+exports.login = function(email, password, req, callback) {
 	userProvider.checkLogin(email, password, function(result) {
 		if(result === false) {
-			callback(false);
+			return callback(false);
 		} else {
 			req.session.user_id = result;
-			callback(true);
+			return callback(true);
 		}
 	});
 }
 
-LoginProvider.prototype.isLoggedIn = function(req, callback) {
+exports.isLoggedIn = function(req, callback) {
 	if(global.debug === true)
 		req.session.user_id = 2;
-	callback(req.session.user_id != undefined);
+	return callback(req.session.user_id != undefined);
 }
 
-LoginProvider.prototype.logout = function(req, callback) {
+exports.logout = function(req, callback) {
 	req.session.user_id = undefined;
-	callback();
+	return callback();
 }
-
-exports.LoginProvider = LoginProvider;
