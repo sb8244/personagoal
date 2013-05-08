@@ -8,7 +8,6 @@ exports.define = function( app )
 	/*
 	 * These routes are public facing
 	 */
-
 	app.all("/register", disallowAuthenticatedUsers);
 	app.get("/register", register.index);
 	app.post("/register", register.process);

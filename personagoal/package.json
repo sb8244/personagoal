@@ -12,6 +12,7 @@
     "connect": "*",
     "forms": "*",
     "node-gyp": "*",
-    "nodeunit": "*"
+    "nodeunit": "*",
+    "async": "*"
   }
 }

@@ -3,7 +3,7 @@
  * Module dependencies.
  */
 
-//global.testing = true;
+global.testing = true;
 global.debug = true;
 var router = require("./router");
 var express = require('express')
