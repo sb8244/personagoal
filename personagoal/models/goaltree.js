@@ -1,5 +1,5 @@
 var mysql = require('./mysql');
-var selectStatements = 'SELECT a.*, User_Goal.user_id, User_Detail.name FROM ( SELECT DISTINCT User_Goal.user_id, Goal.goal_id, title, due_date, NULL as parent_id, NULL as child_id, root, completed_timestamp FROM User_Goal JOIN Goal ON User_Goal.goal_id = Goal.goal_id LEFT OUTER JOIN GoalTreeChildren ON Goal.goal_id = GoalTreeChildren.goal_id OR Goal.goal_id = GoalTreeChildren.child_id JOIN Task ON Goal.task_id = Task.task_id WHERE User_Goal.user_id = ? UNION SELECT DISTINCT User_Goal.user_id, GoalTreeChildren.goal_id as goal_id, title, due_date, null as parent_id, GoalTreeChildren.child_id as child_id, root, completed_timestamp FROM User_Goal JOIN GoalTreeChildren ON User_Goal.goal_id = GoalTreeChildren.child_id JOIN Goal ON GoalTreeChildren.goal_id = Goal.goal_id JOIN Task ON Goal.task_id = Task.task_id WHERE User_Goal.user_id = ? UNION SELECT DISTINCT User_Goal.user_id, GoalTreeChildren.child_id as goal_id, title, due_date, GoalTreeChildren.goal_id as parent_id, null as child_id, root, completed_timestamp FROM User_Goal JOIN GoalTreeChildren ON User_Goal.goal_id = GoalTreeChildren.goal_id JOIN Goal ON GoalTreeChildren.goal_id = Goal.goal_id JOIN Task ON Goal.task_id = Task.task_id WHERE User_Goal.user_id = ? ) as a JOIN User_Goal ON a.goal_id = User_Goal.goal_id LEFT OUTER JOIN User_Detail ON User_Goal.user_id = User_Detail.user_id ORDER BY goal_id';
+var selectStatements = 'SELECT a.*, User_Goal.user_id, User_Detail.name FROM ( SELECT DISTINCT User_Goal.user_id, Goal.goal_id, title, due_date, NULL as parent_id, NULL as child_id, root, completed_timestamp FROM User_Goal JOIN Goal ON User_Goal.goal_id = Goal.goal_id LEFT OUTER JOIN GoalTreeChildren ON Goal.goal_id = GoalTreeChildren.goal_id OR Goal.goal_id = GoalTreeChildren.child_id JOIN Task ON Goal.task_id = Task.task_id WHERE User_Goal.user_id = ? UNION SELECT DISTINCT User_Goal.user_id, GoalTreeChildren.goal_id as goal_id, title, due_date, null as parent_id, GoalTreeChildren.child_id as child_id, root, completed_timestamp FROM User_Goal JOIN GoalTreeChildren ON User_Goal.goal_id = GoalTreeChildren.child_id JOIN Goal ON GoalTreeChildren.goal_id = Goal.goal_id JOIN Task ON Goal.task_id = Task.task_id WHERE User_Goal.user_id = ? UNION SELECT DISTINCT User_Goal.user_id, GoalTreeChildren.child_id as goal_id, title, due_date, GoalTreeChildren.goal_id as parent_id, null as child_id, root, completed_timestamp FROM User_Goal JOIN GoalTreeChildren ON User_Goal.goal_id = GoalTreeChildren.goal_id JOIN Goal ON GoalTreeChildren.goal_id = Goal.goal_id JOIN Task ON Goal.task_id = Task.task_id WHERE User_Goal.user_id = ? ) as a LEFT OUTER JOIN User_Goal ON a.goal_id = User_Goal.goal_id LEFT OUTER JOIN User_Detail ON User_Goal.user_id = User_Detail.user_id ORDER BY goal_id';
 
 exports.getTreeForUser = function(user_id, callback) {
 	params = [ user_id, user_id, user_id ];
@@ -8,7 +8,6 @@ exports.getTreeForUser = function(user_id, callback) {
 			if(err) { return callback(err, null); }
 			else {
 				constructGoalTree(results, function(goalTree) {	
-					console.log(goalTree);
 					return callback(null, goalTree);
 				});
 			}
@@ -18,8 +17,9 @@ exports.getTreeForUser = function(user_id, callback) {
 
 var constructGoalTree = function(results, callback) {
 	var nodes = {};
+	var child_ids = [];
+	//Iterate over each SQL result and construct initial nodes with empty pointers
 	results.forEach(function(item) {
-		console.log(item);
 		if(nodes[item.goal_id] == undefined) {
 			nodes[item.goal_id] = {};
 		}
@@ -28,25 +28,38 @@ var constructGoalTree = function(results, callback) {
 		nodes[item.goal_id].root = item.root;
 		nodes[item.goal_id].completed = item.completed_timestamp;
 		nodes[item.goal_id].users = {};
+		nodes[item.goal_id].id = item.goal_id;
 	});
+	//now iterate through the results again
 	results.forEach(function(item) {
+		//set the payload if it isn't already set
+		//This is needed because there will be multiple rows per node
 		if(nodes[item.goal_id].data == undefined) {
 			nodes[item.goal_id].data = {
 				title: item.title,
 				due_date: item.due_date
 			};
 		}
+		//If there is a parent that isn't itself, set the parent node and child nodes
 		if(nodes[item.goal_id].parent == null && item.parent_id != null && item.goal_id != item.parent_id) {
 			nodes[item.goal_id].parent = nodes[item.parent_id];
 			nodes[item.parent_id].children[item.goal_id] = nodes[item.goal_id];
+			child_ids.push(item.goal_id);
 		}
+		//If the child id is set and it isn't itself, set the child node and parent node
 		if(item.child_id != null && item.child_id != item.goal_id) {
 			nodes[item.goal_id].children[item.child_id] = nodes[item.child_id];
 			nodes[item.child_id].parent = nodes[item.goal_id];
+			child_ids.push(item.child_id);
 		}
+		//Append the users who own this goal
 		if(item.name != null && item.user_id != null) {
 			nodes[item.goal_id].users[item.user_id] = item.name;
 		}
+	});
+	//Remove the non root instances so the tree becomes a tree
+	child_ids.forEach(function(child_id) {
+		delete nodes[child_id];
 	});
 	return callback(nodes);
 }
