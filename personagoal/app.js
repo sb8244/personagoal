@@ -3,13 +3,14 @@
  * Module dependencies.
  */
 
+//global.testing = true;
+global.debug = true;
 var router = require("./router");
 var express = require('express')
   , http = require('http')
   , path = require('path');
 
 var app = express();
-global.debug = true;
 app.set('env', 'development');
 
 // all environments

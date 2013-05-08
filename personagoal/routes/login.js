@@ -1,7 +1,7 @@
 var forms = require("forms");
 var fields = forms.fields;
 var validators = forms.validators;
-var LoginProvider = require("../models/login").LoginProvider;
+var loginProvider = require("../models/login");
 /*
  * Define the registration form fields here
  */
@@ -18,7 +18,6 @@ exports.index = function(req, res) {
 };
 
 exports.logout = function(req, res) {
-	var loginProvider = new LoginProvider();
 	loginProvider.logout(req, function() {
 		res.redirect("/login");
 	});
@@ -28,7 +27,6 @@ exports.process = function(req, res) {
 	login_form.handle(req, {
 		success: function( form ) 
 		{
-			var loginProvider = new LoginProvider();
 			loginProvider.login(form.data.email, form.data.password, req, function(result) {
 				if(result === true) {
 					res.redirect('/user/home');

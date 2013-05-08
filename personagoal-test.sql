@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 03, 2013 at 04:12 AM
+-- Generation Time: May 08, 2013 at 02:31 AM
 -- Server version: 5.5.29
 -- PHP Version: 5.4.6-1ubuntu1.2
 
@@ -88,16 +88,18 @@ CREATE TABLE IF NOT EXISTS `Goal` (
   `due_date` datetime NOT NULL,
   `task_id` int(11) NOT NULL,
   PRIMARY KEY (`goal_id`),
+  UNIQUE KEY `task_id_2` (`task_id`),
   KEY `task_id` (`task_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=16 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=55 ;
 
 --
 -- Dumping data for table `Goal`
 --
 
 INSERT INTO `Goal` (`goal_id`, `completed`, `completed_timestamp`, `due_date`, `task_id`) VALUES
-(1, 0, NULL, '0000-00-00 00:00:00', 2),
-(2, 0, NULL, '0000-00-00 00:00:00', 3),
+(0, 0, NULL, '2013-05-06 08:00:00', 1),
+(1, 0, '2013-05-06 11:17:00', '2013-05-05 11:17:00', 2),
+(2, 0, NULL, '2013-04-05 11:17:00', 3),
 (3, 0, NULL, '0000-00-00 00:00:00', 4),
 (4, 0, NULL, '0000-00-00 00:00:00', 5),
 (5, 0, NULL, '0000-00-00 00:00:00', 6),
@@ -110,7 +112,7 @@ INSERT INTO `Goal` (`goal_id`, `completed`, `completed_timestamp`, `due_date`, `
 (12, 0, NULL, '0000-00-00 00:00:00', 13),
 (13, 0, NULL, '0000-00-00 00:00:00', 14),
 (14, 0, NULL, '0000-00-00 00:00:00', 15),
-(15, 0, NULL, '0000-00-00 00:00:00', 16);
+(15, 0, NULL, '2013-05-05 11:17:00', 16);
 
 -- --------------------------------------------------------
 
@@ -159,13 +161,15 @@ CREATE TABLE IF NOT EXISTS `Task` (
   `title` varchar(150) NOT NULL,
   `description` varchar(800) NOT NULL,
   PRIMARY KEY (`task_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=90 ;
 
 --
 -- Dumping data for table `Task`
 --
 
 INSERT INTO `Task` (`task_id`, `title`, `description`) VALUES
+(0, 'Linked Task', 'This should not be linked to a user but should be to a goal'),
+(1, 'Unlinked Task', 'This task should be not be linked to a goal'),
 (2, 'Test Task - Do not Delete', 'Do not delete'),
 (3, 'Test Task 3 - Do not Delete', 'Do not delete'),
 (4, 'Test Task - Do not Delete', 'Do not delete'),
@@ -180,7 +184,10 @@ INSERT INTO `Task` (`task_id`, `title`, `description`) VALUES
 (13, 'Test Task - Do not Delete', 'Do not delete'),
 (14, 'Test Task - Do not Delete', 'Do not delete'),
 (15, 'Test Task - Do not Delete', 'Do not delete'),
-(16, 'Test Task - Do not Delete', 'Do not delete');
+(16, 'Test Task - Do not Delete', 'Do not delete'),
+(78, 'Test Title', 'Test'),
+(79, 'Test Title', 'Test'),
+(80, 'Test Title', 'Test');
 
 -- --------------------------------------------------------
 
@@ -193,14 +200,15 @@ CREATE TABLE IF NOT EXISTS `User` (
   `email` varchar(255) NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=162 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=309 ;
 
 --
 -- Dumping data for table `User`
 --
 
 INSERT INTO `User` (`user_id`, `email`) VALUES
-(1, 'checkLogin@test.com');
+(1, 'checkLogin@test.com'),
+(2, 'test2@test.com');
 
 -- --------------------------------------------------------
 
@@ -221,7 +229,8 @@ CREATE TABLE IF NOT EXISTS `User_Detail` (
 --
 
 INSERT INTO `User_Detail` (`user_id`, `name`, `role`, `image_path`) VALUES
-(1, 'checkLogin', 'tester', NULL);
+(1, 'checkLogin', 'tester', NULL),
+(2, 'Person 2', 'Testing', NULL);
 
 -- --------------------------------------------------------
 
@@ -241,7 +250,9 @@ CREATE TABLE IF NOT EXISTS `User_Goal` (
 --
 
 INSERT INTO `User_Goal` (`user_id`, `goal_id`) VALUES
+(2, 1),
 (1, 3),
+(2, 3),
 (1, 6),
 (1, 7),
 (1, 11),
@@ -265,7 +276,8 @@ CREATE TABLE IF NOT EXISTS `User_Password` (
 --
 
 INSERT INTO `User_Password` (`user_id`, `password`) VALUES
-(1, '5f4dcc3b5aa765d61d8327deb882cf99');
+(1, '5f4dcc3b5aa765d61d8327deb882cf99'),
+(2, '5f4dcc3b5aa765d61d8327deb882cf99');
 
 --
 -- Constraints for dumped tables

@@ -5,6 +5,7 @@ config.getConfiguration(function(data) {
 	var databaseName = 'personagoal';
 	if(global.testing === true)
 		databaseName = 'personagoal-test';
+	console.log(databaseName);
 	pool  = mysql.createPool({
 		host     : data.host,
 		user     : data.user,

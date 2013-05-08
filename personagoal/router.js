@@ -1,7 +1,7 @@
 var register = require('./routes/register');
 var login = require('./routes/login');
 var home = require('./routes/home');
-var LoginProvider = require('./models/login').LoginProvider;
+var loginProvider = require('./models/login');
 
 exports.define = function( app )
 {
@@ -27,7 +27,6 @@ exports.define = function( app )
 }
 
 var disallowAuthenticatedUsers = function(req, res, next) {
-	var loginProvider = new LoginProvider();
 	loginProvider.isLoggedIn(req, function(result) {
 	    if(result === false) {
 	        next();
@@ -38,7 +37,6 @@ var disallowAuthenticatedUsers = function(req, res, next) {
 }
 
 var requireAuthentication = function(req,res,next) {
-	var loginProvider = new LoginProvider();
 	loginProvider.isLoggedIn(req, function(result) {
 	    if(result === true) {
 	        next();
