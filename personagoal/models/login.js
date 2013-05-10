@@ -12,8 +12,8 @@ exports.login = function(email, password, req, callback) {
 }
 
 exports.isLoggedIn = function(req, callback) {
-	if(global.debug === true)
-		req.session.user_id = 2;
+	if(global.user_id != undefined)
+		req.session.user_id = global.user_id;
 	return callback(req.session.user_id != undefined);
 }
 

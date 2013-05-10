@@ -8,7 +8,7 @@ exports.getTreeForUser = function(user_id, callback) {
 		connection.query(selectStatements, params, function(err, results) {
 			if(err) { return callback(err, null); }
 			else {
-				constructGoalTree(results, function(goalTree) {	
+				constructGoalTree(results, user_id, function(goalTree) {	
 					return callback(null, goalTree);
 				});
 			}
@@ -16,7 +16,7 @@ exports.getTreeForUser = function(user_id, callback) {
 	});
 }
 
-var constructGoalTree = function(results, callback) {
+var constructGoalTree = function(results, user_id, callback) {
 	var nodes = {};
 	var child_ids = [];
 
@@ -27,12 +27,13 @@ var constructGoalTree = function(results, callback) {
 				if(nodes[item.goal_id] == undefined) {
 					nodes[item.goal_id] = {};
 				}
-				nodes[item.goal_id].children = {};
+				nodes[item.goal_id].children = null;
 				nodes[item.goal_id].parent = null;
 				nodes[item.goal_id].root = item.root;
 				nodes[item.goal_id].completed = item.completed_timestamp;
 				nodes[item.goal_id].users = {};
 				nodes[item.goal_id].id = item.goal_id;
+				nodes[item.goal_id].user_own = false;
 				return asyncCallback();
 			},
 			function(err) {
@@ -58,11 +59,15 @@ var constructGoalTree = function(results, callback) {
 						//If there is a parent that isn't itself, set the parent node and child nodes
 						if(nodes[item.goal_id].parent == null && item.parent_id != null && item.goal_id != item.parent_id) {
 							nodes[item.goal_id].parent = nodes[item.parent_id];
+							if(nodes[item.parent_id].children == null)
+								nodes[item.parent_id].children = {};
 							nodes[item.parent_id].children[item.goal_id] = nodes[item.goal_id];
 							child_ids.push(item.goal_id);
 						}
 						//If the child id is set and it isn't itself, set the child node and parent node
 						if(item.child_id != null && item.child_id != item.goal_id) {
+							if(nodes[item.goal_id].children == null)
+								nodes[item.goal_id].children = {};
 							nodes[item.goal_id].children[item.child_id] = nodes[item.child_id];
 							nodes[item.child_id].parent = nodes[item.goal_id];
 							child_ids.push(item.child_id);
@@ -70,6 +75,9 @@ var constructGoalTree = function(results, callback) {
 						//Append the users who own this goal
 						if(item.name != null && item.user_id != null) {
 							nodes[item.goal_id].users[item.user_id] = item.name;
+							if(item.user_id === user_id) {
+								nodes[item.goal_id].user_own = true;
+							}
 						}
 						return asyncCallback();
 					},

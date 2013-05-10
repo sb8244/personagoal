@@ -86,3 +86,26 @@
 		.dark-bottom-border {
 			border-bottom: 1px solid #999;
 		}
+
+
+		/*******************
+		 * GOAL CONTAINER  *
+		 *******************/
+		 .goal-children {
+		 	margin-left: 15px;
+		 }
+		 .goal-container {
+		 	margin-top: 5px;
+		 	margin-bottom: 3px;
+		 	line-height:1.2em;
+		 }
+		 .goal-children {
+		 	margin-top: 3px;
+		 }
+		 .goal-children.well {
+		 	padding-top: 3px;
+		 	padding-bottom: 5px;
+		 }
+		 .users span {
+		 	padding-left: 10px;
+		 }
