@@ -12,7 +12,11 @@ html
 		.content.outer-scroll
 			.inner-scroll
 				h1.dark-bottom-border Dashboard
-				a(href='/logout') Logout
+				ul
+					li
+						a(href='/user/home') Your Goals
+					li 
+						a(href='/logout') Logout
 	.right-body.left-push
 		.top-sticky.left-push
 			span.bigger.padded-left #{title}

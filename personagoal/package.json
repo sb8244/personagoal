@@ -13,6 +13,7 @@
     "forms": "*",
     "node-gyp": "*",
     "nodeunit": "*",
-    "async": "*"
+    "async": "*",
+    "dateformat": "*"
   }
 }

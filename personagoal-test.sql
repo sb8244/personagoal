@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 08, 2013 at 02:31 AM
+-- Generation Time: May 11, 2013 at 08:03 AM
 -- Server version: 5.5.29
 -- PHP Version: 5.4.6-1ubuntu1.2
 
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `Goal` (
   PRIMARY KEY (`goal_id`),
   UNIQUE KEY `task_id_2` (`task_id`),
   KEY `task_id` (`task_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=55 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=16 ;
 
 --
 -- Dumping data for table `Goal`
@@ -98,12 +98,12 @@ CREATE TABLE IF NOT EXISTS `Goal` (
 
 INSERT INTO `Goal` (`goal_id`, `completed`, `completed_timestamp`, `due_date`, `task_id`) VALUES
 (0, 0, NULL, '2013-05-06 08:00:00', 1),
-(1, 0, '2013-05-06 11:17:00', '2013-05-05 11:17:00', 2),
+(1, 0, '2013-05-06 11:17:00', '2013-05-29 08:00:00', 2),
 (2, 0, NULL, '2013-04-05 11:17:00', 3),
 (3, 0, NULL, '0000-00-00 00:00:00', 4),
 (4, 0, NULL, '0000-00-00 00:00:00', 5),
 (5, 0, NULL, '0000-00-00 00:00:00', 6),
-(6, 0, NULL, '0000-00-00 00:00:00', 7),
+(6, 0, NULL, '2013-05-01 00:00:00', 7),
 (7, 0, NULL, '0000-00-00 00:00:00', 8),
 (8, 0, NULL, '0000-00-00 00:00:00', 9),
 (9, 0, NULL, '0000-00-00 00:00:00', 10),
@@ -161,7 +161,7 @@ CREATE TABLE IF NOT EXISTS `Task` (
   `title` varchar(150) NOT NULL,
   `description` varchar(800) NOT NULL,
   PRIMARY KEY (`task_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=90 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=81 ;
 
 --
 -- Dumping data for table `Task`
@@ -200,7 +200,7 @@ CREATE TABLE IF NOT EXISTS `User` (
   `email` varchar(255) NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=309 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 --
 -- Dumping data for table `User`
@@ -293,9 +293,9 @@ ALTER TABLE `Goal`
 -- Constraints for table `GoalTreeChildren`
 --
 ALTER TABLE `GoalTreeChildren`
-  ADD CONSTRAINT `GoalTreeChildren_ibfk_3` FOREIGN KEY (`root`) REFERENCES `Goal` (`goal_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `GoalTreeChildren_ibfk_1` FOREIGN KEY (`goal_id`) REFERENCES `Goal` (`goal_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `GoalTreeChildren_ibfk_2` FOREIGN KEY (`child_id`) REFERENCES `Goal` (`goal_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `GoalTreeChildren_ibfk_2` FOREIGN KEY (`child_id`) REFERENCES `Goal` (`goal_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `GoalTreeChildren_ibfk_3` FOREIGN KEY (`root`) REFERENCES `Goal` (`goal_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `User_Detail`
@@ -307,8 +307,8 @@ ALTER TABLE `User_Detail`
 -- Constraints for table `User_Goal`
 --
 ALTER TABLE `User_Goal`
-  ADD CONSTRAINT `User_Goal_ibfk_2` FOREIGN KEY (`goal_id`) REFERENCES `Goal` (`goal_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `User_Goal_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `User_Goal_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `User_Goal_ibfk_2` FOREIGN KEY (`goal_id`) REFERENCES `Goal` (`goal_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `User_Password`

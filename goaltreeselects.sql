@@ -30,7 +30,7 @@ SELECT a.*, User_Goal.user_id, User_Detail.name FROM
 
 	SELECT DISTINCT GoalTreeChildren.child_id as goal_id, title, due_date, GoalTreeChildren.goal_id as parent_id, null as child_id, root, completed_timestamp FROM User_Goal
 		JOIN GoalTreeChildren ON User_Goal.goal_id = GoalTreeChildren.goal_id
-		JOIN Goal ON GoalTreeChildren.goal_id = Goal.goal_id
+		JOIN Goal ON GoalTreeChildren.child_id = Goal.goal_id
 		JOIN Task ON Goal.task_id = Task.task_id 
 		WHERE User_Goal.user_id = 1
 

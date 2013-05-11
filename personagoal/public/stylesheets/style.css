@@ -103,9 +103,20 @@
 		 	margin-top: 3px;
 		 }
 		 .goal-children.well {
+		 	margin-top: 3px;
 		 	padding-top: 3px;
 		 	padding-bottom: 5px;
 		 }
-		 .users span {
-		 	padding-left: 10px;
+		 .complete-true > span {
+		 	color: green;
+		 }
+		 .users {
+		 	margin-left: 10px;
+		 }
+		 .users > span {
+		 	padding: 1px 5px;
+		 	border:1px solid #ccc;
+		 	border-radius: 1em;
+		 	color: #3a87ad;
+		 	cursor: pointer;
 		 }
