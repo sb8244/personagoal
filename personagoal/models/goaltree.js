@@ -36,9 +36,13 @@ var constructGoalTree = function(results, user_id, callback) {
 				nodes[item.goal_id].users = {};
 				nodes[item.goal_id].id = item.goal_id;
 				nodes[item.goal_id].user_own = false;
+				nodes[item.goal_id].overdue = false;
 				if(item.due_date == 'Invalid Date') {
 					item.due_date = "No Due Date";
 				} else {
+					if(item.due_date < new Date()) {
+						nodes[item.goal_id].overdue = true;
+					}
 					item.due_date = dateFormat(item.due_date, "m/dd/yy");
 				}
 				if(item.completed_timestamp != null) {

@@ -14,41 +14,44 @@ exports.index = function(req, res) {
 }
 
 var async = require("async");
-/* 
- * This isn't in the model because models don't care about html
- *
- * Holy shit it works!
- */
+
+var generateGoalContentHTML = function(node, well, callback) {
+	//We're going to build some html along the way
+	var html = "";
+	var checked = "";
+	if(node.completed === true) {
+		checked = " checked='checked' ";
+	}
+	if(node.user_own === true && node.completed === false) {
+		html += "<input type='checkbox' data-id='"+node.id+"' + " + checked + "/>";	
+	} else {
+		html += "<input type='checkbox' disabled='disabled'" + checked + "/>";
+	}
+	html += "<span class='title' data-id='"+node.id+"'>" + node.data.title + "</span>";
+	html += "<span class='due-date' data-id='"+node.id+"'> - Due: " + node.data.due_date + "</span>";
+	html += "<span class='users'>";
+	//Iterate over the users object
+	var user_count = 0;
+	var max_display = 2;
+	async.each(Object.keys(node.users), function(user_id, callback) {
+		user_count++;
+		if(user_count <= max_display)  
+			html += "<span data-id='"+user_id+"'>" + node.users[user_id] + "</span>";
+		else if(user_count == max_display)
+			html += "<span>More</span>";
+		return callback();
+	}, function() {
+		html += "</span>";
+		return callback(html);
+	});
+}
+
 var generateTreeHTML = function(tree, exit_callback) {
 	//define a recursive function for processing a node and it's chilren
 	var generateNodeHTML = function(node, well, callback) {
-		//We're going to build some html along the way
-		var html = "";
-		html += "<div class='goal-container "+well+ " complete-" + node.completed + "'>";
-		var checked = "";
-		if(node.completed === true) {
-			checked = " checked='checked' ";
-		}
-		if(node.user_own === true && node.completed === false) {
-			html += "<input type='checkbox' data-id='"+node.id+"' + " + checked + "/>";	
-		} else {
-			html += "<input type='checkbox' disabled='disabled'" + checked + "/>";
-		}
-		html += "<span class='title' data-id='"+node.id+"'>" + node.data.title + "</span>";
-		html += "<span class='due-date' data-id='"+node.id+"'> - Due: " + node.data.due_date + "</span>";
-		html += "<span class='users'>";
-		//Iterate over the users object
-		var user_count = 0;
-		var max_display = 2;
-		async.each(Object.keys(node.users), function(user_id, callback) {
-			user_count++;
-			if(user_count <= max_display)  
-				html += "<span data-id='"+user_id+"'>" + node.users[user_id] + "</span>";
-			else if(user_count == max_display)
-				html += "<span>More</span>";
-			callback();
-		}, function() {
-			html += "</span>";
+		var html = "<div class='goal-container "+well+ " complete-" + node.completed + " overdue-" + node.overdue + "''>";
+		generateGoalContentHTML(node, well, function(result) {
+			html += result;
 			if(node.children != null) {
 				html += "<div class='goal-children well'>";
 				//iterate over each child and recursively call this function to do so
