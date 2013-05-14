@@ -1,5 +1,11 @@
 extends layout
 
 block content
-	h1 Your Goals
-	!= goaltree
+	-if (overdue)
+		h1 Overdue Alert
+		!= overdue
+	-else
+		p(class='text-success well') No goals you own are overdue. Great job!
+	-if (goaltree)
+		h1 Full View
+		!= goaltree

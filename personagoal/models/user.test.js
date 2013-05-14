@@ -207,6 +207,31 @@ exports.testCheckLogin = {
 			});
 		}
 	},
-
-
 };
+
+exports.listUsers = {
+	testListUser: function(test) {
+		mysql.getConnection(function( connection ) {
+			connection.query('SELECT * FROM User', params,
+				function(err, result) {
+					connection.end();
+					if( err ) {
+						throw ( err );
+					} else {
+						stepTwo(result);
+					}
+				}
+			);
+		});
+		var stepTwo = function(result) {
+			userProvider.listUsers(function(data) {
+				test.equal(data.length, result.length);
+				data.forEach(function(item) {
+					test.notEqual(item.user_id, null);
+					test.notEqual(item.name, null);
+				});
+				test.done();
+			});
+		}
+	}
+}

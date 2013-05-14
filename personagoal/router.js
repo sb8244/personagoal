@@ -1,6 +1,7 @@
 var register = require('./routes/register');
 var login = require('./routes/login');
 var home = require('./routes/home');
+var ajax = require('./routes/ajax');
 var loginProvider = require('./models/login');
 
 exports.define = function( app )
@@ -23,6 +24,8 @@ exports.define = function( app )
 
 	app.all("/logout", login.logout);
 	app.get("/user/home", home.index);
+
+	app.get("/ajax/toolbar/basegoal", ajax.basegoal);
 }
 
 var disallowAuthenticatedUsers = function(req, res, next) {

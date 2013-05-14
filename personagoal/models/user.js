@@ -106,3 +106,17 @@ exports.checkLogin = function(email, password, callback) {
 		);
 	});
 }
+
+exports.listUsers = function(callback) {
+	var sqlStatement = 'SELECT user_id, name FROM User_Detail ORDER BY name ASC';
+	var params = [];
+	mysql.getConnection(function( connection ) {
+		connection.query(sqlStatement, params,
+			function(err, result) {
+				connection.end();
+				if( err ) return callback(err);
+				else return callback(result);
+			}
+		);
+	});
+}

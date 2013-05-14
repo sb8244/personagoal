@@ -1,0 +1,7 @@
+div(class='sub clearfix hide')
+	div
+		button(type='button', class='close pull-left', data-dismiss='alert') &times;
+		form(method='post', class="pull-left")
+			input(type="text",class="input-xlarge",placeholder="Task title")
+			-if(user_select)
+				!= user_select

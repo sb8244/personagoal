@@ -3,8 +3,8 @@
  * Module dependencies.
  */
 
-global.testing = true;
-global.debug = true;
+global.testing = false;
+global.debug = false;
 global.user_id = 1;
 var router = require("./router");
 var express = require('express')
@@ -15,9 +15,11 @@ var app = express();
 app.set('env', 'development');
 
 // all environments
+
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
+app.set('view options', { pretty: true });
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
@@ -26,7 +28,7 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.locals.pretty = true;
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
@@ -34,7 +36,7 @@ if ('development' == app.get('env')) {
 router.define(app);
 
 process.on('uncaughtException', function (err) {
-  console.log('Caught exception: ' + err);
+	console.log(err.stack);
 });
 
 http.createServer(app).listen(app.get('port'), function(){

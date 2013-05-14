@@ -1,15 +1,33 @@
 exports.index = function(req, res) {
 	var goalTreeProvider = require("../models/goaltree");
 	var user_id = req.session.user_id;
-	goalTreeProvider.getTreeForUser(user_id, function(err, tree) {
-		var util = require('util');
-		//console.log(util.inspect(tree, false, null));
-		generateTreeHTML(tree, function(html) {
-			res.render('home', {
-				title: 'Home',
-				goaltree: html
+	async.parallel([function(callback) {
+		goalTreeProvider.getTreeForUser(user_id, function(err, tree) {
+			if(err) return callback(err, null);
+			generateTreeHTML(tree, function(html) {	
+				return callback(null, html);
 			});
 		});
+	}, function(callback) {
+		goalTreeProvider.getOverdueGoalsForUser(user_id, function(err, nodes) {
+			if(err) return callback(err, null);
+			if(Object.keys( nodes ).length !== 0) {
+				generateOverdueHTML(nodes, function(html) {
+					return callback(null, html);
+				});
+			} else {
+				return callback(null);
+			}
+		});
+	}], function(err, results) {
+		if(err) throw err;
+		else {
+			res.render('home', {
+				title: 'Home',
+				goaltree: results[0],
+				overdue: results[1]
+			});
+		}
 	});
 }
 
@@ -82,4 +100,26 @@ var generateTreeHTML = function(tree, exit_callback) {
 	}, function() {
 		return exit_callback(html);
 	});
+}
+
+var generateOverdueHTML = function(nodes, exit_callback) {
+	var generateNodeHTML = function(node, callback) {
+		var html = "<div class='goal-container complete-" + node.completed + " overdue-true''>";
+		generateGoalContentHTML(node, "", function(result) {
+			html += result;
+			html += "</div>";
+			return callback(html);
+		});
+	}
+	var html ="<div class='well'>";
+	async.each(Object.keys(nodes), function(id, callback) {
+		generateNodeHTML(nodes[id], function(result) {
+			html += result;
+			return callback();
+		})
+	}, function() {
+		html += "</div>";
+		return exit_callback(html);
+	});
+
 }
