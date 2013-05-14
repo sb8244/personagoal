@@ -9,6 +9,9 @@
 				$.get("/ajax/toolbar/basegoal", function(data) {
 					$(".toolbar").append(data).find(".sub").fadeIn('normal');
 					$(".toolbar select").chosen();
+					$('#datepicker').datepicker({
+						format: 'mm-dd-yyyy'
+					});
 				});
 			}
 		});
