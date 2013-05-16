@@ -37,16 +37,17 @@ var generateGoalContentHTML = function(node, well, callback) {
 	//We're going to build some html along the way
 	var html = "";
 	var checked = "";
+	html += "<span class='highlight' data-id='"+node.id+"'>";
 	if(node.completed === true) {
 		checked = " checked='checked' ";
 	}
-	if(node.user_own === true && node.completed === false) {
-		html += "<input type='checkbox' data-id='"+node.id+"' + " + checked + "/>";	
+	if(node.user_own === true /*&& node.completed === false*/) {
+		html += "<input type='checkbox'" + checked + "/>";	
 	} else {
 		html += "<input type='checkbox' disabled='disabled'" + checked + "/>";
 	}
-	html += "<span class='title' data-id='"+node.id+"'>" + node.data.title + "</span>";
-	html += "<span class='due-date' data-id='"+node.id+"'> - Due: " + node.data.due_date + "</span>";
+	html += "<span class='title'>" + node.data.title + "</span>";
+	html += "<span class='due-date'> - Due: " + node.data.due_date + "</span>";
 	html += "<span class='users'>";
 	//Iterate over the users object
 	var user_count = 0;
@@ -59,7 +60,7 @@ var generateGoalContentHTML = function(node, well, callback) {
 			html += "<span>More</span>";
 		return callback();
 	}, function() {
-		html += "</span>";
+		html += "</span></span>";
 		return callback(html);
 	});
 }

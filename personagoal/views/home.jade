@@ -2,10 +2,14 @@ extends layout
 
 block content
 	-if (overdue)
-		h1 Overdue Alert
-		!= overdue
+		.overdue-container
+			h1 Overdue Alert
+			!= overdue
 	-else
-		p(class='text-success well') No goals you own are overdue. Great job!
+		.overdue-container
+			h1 Great Job!
+			p(class='text-success well') No goals you own are overdue.
 	-if (goaltree)
-		h1 Full View
-		!= goaltree
+		.fullview-container
+			h1 Full View
+			!= goaltree

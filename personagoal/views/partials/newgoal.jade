@@ -2,7 +2,11 @@ div(class='sub clearfix hide')
 	div
 		button(type='button', class='close pull-left', data-dismiss='alert') &times;
 		form(method='post', class="pull-left")
-			input(type="text",class="input-xlarge",placeholder="Task title")
-			input(type="text",id="datepicker",placeholder="Due date")
-			-if(user_select)
-				!= user_select
+			div
+				input(type="text",class="input-xlarge",placeholder="Task title - Required",name="title")
+				input(type="text",id="datepicker",placeholder="Due date",name="due_date")
+			div
+				-if(user_select)
+					!= user_select
+				input(type="text",id="parent_title",placeholder="Parent Goal")
+				span(class='btn btn-inverse basegoal') Add

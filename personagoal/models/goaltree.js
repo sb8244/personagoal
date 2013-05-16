@@ -6,8 +6,9 @@ var prefix = "SELECT a.*, User_Goal.user_id, User_Detail.name FROM ( ";
 var postfix = ") AS a LEFT OUTER JOIN User_Goal AS User_Goal ON a.goal_id = User_Goal.goal_id LEFT OUTER JOIN User_Detail ON User_Goal.user_id = User_Detail.user_id ORDER BY a.goal_id";
 
 exports.getOverdueGoalsForUser = function(user_id, callback) {
-	var selectStatement = prefix + "SELECT * FROM `User_Goal` NATURAL JOIN `Goal` NATURAL JOIN Task WHERE due_date > 0 AND due_date < CURRENT_TIMESTAMP AND user_id=?" + postfix;
+	var selectStatement = prefix + "SELECT * FROM `User_Goal` NATURAL JOIN `Goal` NATURAL JOIN Task WHERE due_date > 0 AND due_date < CURRENT_TIMESTAMP AND user_id=? AND completed_timestamp IS NULL" + postfix;
 	var params = [ user_id ];
+	console.log(selectStatement);
 	mysql.getConnection(function(connection) {
 		connection.query(selectStatement, params, function(err, results) {
 			connection.end();
@@ -48,7 +49,8 @@ var nodeCreation = function(results, user_id, callback) {
 			nodes[item.goal_id].parent = null;
 			nodes[item.goal_id].root = item.root;
 			nodes[item.goal_id].completed = false;
-			nodes[item.goal_id].user_own = false;
+			if(nodes[item.goal_id].user_own !== true)
+				nodes[item.goal_id].user_own = false;
 			if(nodes[item.goal_id].users == undefined) {
 				nodes[item.goal_id].users = {};
 			} 

@@ -14,6 +14,7 @@
     "node-gyp": "*",
     "nodeunit": "*",
     "async": "*",
-    "dateformat": "*"
+    "dateformat": "*",
+    "express-validator": "*"
   }
 }

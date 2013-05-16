@@ -57,26 +57,93 @@ exports.insert = {
 		});
 	}
 };
-/*
-exports.get = {
-	getUserTasks: function(test) {
-		test.expect(5);
-		var taskProvider = new TaskProvider();
-		//these are constants in the test database and should not be deleted
-		var user_id = 1;
-		var task_id = 2;
-		taskProvider.linkUserToTask(user_id, task_id, function(err, result) {
-			test.equals(result, true, "Result should be true");
-			taskProvider.getTasksForUser(user_id, function(err, result) {
-				test.equals(err, null, "Err should be null");
-				test.equals(result[0].task_id, 2, "Task ID should be 2");
-				test.equals(result[0].user_id, 1, "User ID should be 1");
-				test.equals(result.length, 1, "Should be 1 result");
-				connection.query('DELETE FROM User_Task WHERE user_id = ? AND task_id = ?', [user_id, task_id], 
-				function() {
-					test.done();
+
+exports.goaltree = {
+	linkParent: function(test) {
+		goalProvider.linkGoalToParent(4, 1, function(err, result) {
+			test.expect(5);
+			test.equals(err, null);
+			test.equals(result, true);
+			mysql.getConnection(function( connection ) {
+				params [ 1, 4, 1 ];
+				connection.query('SELECT * FROM GoalTreeChildren WHERE goal_id = ? AND child_id = ? AND root = ?', params,
+				function(err, result) {
+					test.equals(err, null);
+					test.equals(result.length, 1);
+					connection.query('DELETE FROM GoalTreeChildren WHERE goal_id = ? AND child_id = ? AND root = ?', params,
+					function(err2, result2) {
+						test.equals(err, null);
+						connection.end();
+						test.done();
+					});
+				});
+			});
+		});
+	}, 
+
+	linkNoParent: function(test) {
+		goalProvider.linkGoalToParent(4, null, function(err, result) {
+			test.expect(5);
+			test.equals(err, null);
+			test.equals(result, true);
+			mysql.getConnection(function( connection ) {
+				params [ 4, 4, 4 ];
+				connection.query('SELECT * FROM GoalTreeChildren WHERE goal_id = ? AND child_id = ? AND root = ?', params,
+				function(err, result) {
+					test.equals(err, null);
+					test.equals(result.length, 1);
+					connection.query('DELETE FROM GoalTreeChildren WHERE goal_id = ? AND child_id = ? AND root = ?', params,
+					function(err2, result2) {
+						test.equals(err, null);
+						connection.end();
+						test.done();
+					});
 				});
 			});
 		});
 	}
-};*/
+}
+
+exports.completed = {
+	markComplete: function(test) {
+		var goal_id = 3;
+		var user_id = 1;
+		mysql.getConnection(function( connection ) {
+			connection.query('SELECT * FROM Goal WHERE goal_id = ?', [goal_id], function(err, result) {
+				test.equals(err, null);
+				test.equals(result[0].completed_timestamp, null);
+				goalProvider.markGoalComplete(goal_id, user_id, function(err, result) {
+					test.equals(err, null);
+					test.equals(result, true);
+					connection.query('SELECT * FROM Goal WHERE goal_id = ?', [goal_id], function(err, result) {
+						test.equals(err, null);
+						test.notEqual(result[0].completed_timestamp, null);
+						connection.query('UPDATE Goal SET completed_timestamp = NULL WHERE goal_id=?', [goal_id],function(err, result) {
+							test.equals(err, null);
+							connection.end();
+							test.done();
+						});
+					});
+				});
+			});
+		});
+	},
+	markNotComplete: function(test) {
+		var goal_id = 3;
+		var user_id = 1;
+		goalProvider.markGoalComplete(goal_id, user_id, function(err, result) {
+			goalProvider.markGoalNotComplete(goal_id, user_id, function(err, result) {
+				test.equals(err, null);
+				test.equals(result, true);
+				mysql.getConnection(function( connection ) {
+					connection.query('SELECT * FROM Goal WHERE goal_id = ?', [goal_id], function(err, result) {
+						test.equals(err, null);
+						test.equals(result[0].completed_timestamp, null);
+						connection.end();
+						test.done();
+					});
+				});
+			});
+		});
+	}
+}

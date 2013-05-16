@@ -9,7 +9,8 @@ global.user_id = 1;
 var router = require("./router");
 var express = require('express')
   , http = require('http')
-  , path = require('path');
+  , path = require('path')
+  , expressValidator = require('express-validator');
 
 var app = express();
 app.set('env', 'development');
@@ -23,6 +24,7 @@ app.set('view options', { pretty: true });
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
+app.use(expressValidator);
   app.use(express.cookieParser('personagoal-secret-word'));
   app.use(express.session());
 app.use(express.methodOverride());

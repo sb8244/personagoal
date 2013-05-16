@@ -21,11 +21,15 @@ exports.define = function( app )
 	 * Require all further routes to be logged in or a 401 error is thrown
 	 */
 	app.all('/user/*', requireAuthentication);
+	app.all('/ajax', requireAuthentication);
+	app.all('/logout', requireAuthentication);
 
 	app.all("/logout", login.logout);
 	app.get("/user/home", home.index);
 
 	app.get("/ajax/toolbar/basegoal", ajax.basegoal);
+	app.post("/ajax/toolbar/basegoal", ajax.basegoalprocess);
+	app.post("/ajax/toolbar/markgoal", ajax.markgoal);
 }
 
 var disallowAuthenticatedUsers = function(req, res, next) {
