@@ -152,7 +152,8 @@ exports.project = {
 	linkGoalToProjectValid: function(test) {
 		var goal_id = 0;
 		var project_id = 1;
-		goalProvider.linkGoalToProject(goal_id, project_id, function(err, result) {
+		var user_id = 1;
+		goalProvider.linkGoalToProject(goal_id, project_id, user_id, function(err, result) {
 			test.equals(err, null);
 			test.equals(result, true);
 			mysql.getConnection(function( connection ) {
@@ -169,10 +170,11 @@ exports.project = {
 	linkGoalToProjectDuplicate: function(test) {
 		var goal_id = 0;
 		var project_id = 1;
-		goalProvider.linkGoalToProject(goal_id, project_id, function(err, result) {
+		var user_id = 1;
+		goalProvider.linkGoalToProject(goal_id, project_id, user_id, function(err, result) {
 			test.equals(err, null);
 			test.equals(result, true);
-			goalProvider.linkGoalToProject(goal_id, project_id, function(err, result) {
+			goalProvider.linkGoalToProject(goal_id, project_id, user_id, function(err, result) {
 				test.notEqual(err, null);
 				test.equals(result, false);
 				mysql.getConnection(function( connection ) {
@@ -183,6 +185,25 @@ exports.project = {
 						test.equals(result.affectedRows, 1);
 						test.done();
 					});
+				});
+			});
+		});
+	},
+	linkGoalToProjectNotAuthed: function(test) {
+		var goal_id = 0;
+		var project_id = 1;
+		var user_id = -1;
+		goalProvider.linkGoalToProject(goal_id, project_id, user_id, function(err, result) {
+			test.notEqual(err, null);
+			test.equals(err.err, "not allowed");
+			test.equals(result, false);
+			mysql.getConnection(function( connection ) {
+				connection.query('DELETE FROM Goal_Project WHERE goal_id = ? AND project_id = ?', [goal_id, project_id],
+				function(err, result) {
+					connection.end();
+					test.equals(err, null);
+					test.equals(result.affectedRows, 0);
+					test.done();
 				});
 			});
 		});

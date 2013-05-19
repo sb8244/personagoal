@@ -27,6 +27,8 @@ exports.define = function( app )
 	app.all("/logout", login.logout);
 	app.get("/user/home", home.index);
 
+	app.get("/user/project/:project_id", home.project);
+
 	app.get("/ajax/toolbar/basegoal", ajax.basegoal);
 	app.post("/ajax/toolbar/basegoal", ajax.basegoalprocess);
 	app.post("/ajax/toolbar/markgoal", ajax.markgoal);

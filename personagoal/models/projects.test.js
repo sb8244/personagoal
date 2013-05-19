@@ -42,7 +42,7 @@ exports.setDescription = {
 	},
 	setDescriptionNoProject: function(test) {
 		test.expect(2);
-		projectProvider.setDescription(0, "This is a test 123", function(err, result) {
+		projectProvider.setDescription(-1, "This is a test 123", function(err, result) {
 			test.equals(err, null);
 			test.equals(result, false);
 			test.done();

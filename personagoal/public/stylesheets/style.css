@@ -89,6 +89,13 @@
 			border-bottom: 1px solid #999;
 		}
 
+		/*******************
+		 * PROJ CONTAINER  *
+		 *******************/
+		 .project {
+		 	float:left ;
+		 	margin: 20px 40px 20px 0px;
+		 }
 
 		/*******************
 		 * GOAL CONTAINER  *

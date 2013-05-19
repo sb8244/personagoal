@@ -2,6 +2,7 @@ var async = require("async");
 var userProvider = require("../models/user");
 var taskProvider = require("../models/task");
 var goalProvider = require("../models/goal");
+var projectProvider = require("../models/project");
 
 exports.markgoal = function(req, res) {
 	req.assert('goal_id', 'Invalid Goal Id').notEmpty().isNumeric();
@@ -44,7 +45,9 @@ exports.basegoal = function(req, res) {
 }
 
 exports.basegoalprocess = function(req, res) {
+	var user_id = req.session.user_id;
 	req.assert('title', 'Invalid Title').notEmpty();
+	req.assert('project_id', 'Invalid Project ID').notEmpty().isNumeric();
 	if(!Array.isArray(req.param('users'))) {
 		//this should fail everytime, sort of hacky
 		req.assert('users', 'Select Users').isAlpha().isNumeric();
@@ -67,6 +70,7 @@ exports.basegoalprocess = function(req, res) {
 	} else {
 		var title = req.param('title');
 		var users = req.param('users');
+		var project_id = req.param('project_id');
 		var due_date = new Date(req.param('due_date'));
 		taskProvider.createTask({title: title, description: null}, function(err, task_id) {
 			if(err) throw err;
@@ -86,6 +90,11 @@ exports.basegoalprocess = function(req, res) {
 							},
 							function(callback) {
 								goalProvider.linkGoalToParent(goal_id, parent_id, function(err, result) {
+									return callback(err);
+								});
+							},
+							function(callback) {
+								goalProvider.linkGoalToProject(goal_id, project_id, user_id, function(err, result) {
 									return callback(err);
 								});
 							}

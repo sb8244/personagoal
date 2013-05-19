@@ -134,22 +134,33 @@ exports.linkUserToGoal = function(user_id, goal_id, callback) {
 	});
 }
 
-exports.linkGoalToProject = function(goal_id, project_id, callback) {
+exports.linkGoalToProject = function(goal_id, project_id, user_id, callback) {
 	var params = [
 		goal_id,
 		project_id
 	];
+	var checkParams = [
+		user_id,
+		project_id
+	];
 	mysql.getConnection(function( connection ) {
-		connection.query('INSERT INTO Goal_Project VALUES(?, ?)', params,
+		connection.query('SELECT * FROM User_Project WHERE user_id = ? AND project_id = ?', checkParams,
 		function(err, result) {
-			connection.end();
-			//If there was a duplicate entry, alert the callback
-			if(err && err.code == 'ER_DUP_ENTRY') {
-				return callback({err: "duplicate"}, false);
-			} else if( err ) {
-				return callback ( err , null);
-			} else {
-				return callback(null, true);
+			if(err) return callback(err, null);
+			else if(result.length === 0) return callback({err: "not allowed"}, false);
+			else {
+				connection.query('INSERT INTO Goal_Project VALUES(?, ?)', params,
+				function(err, result) {
+					connection.end();
+					//If there was a duplicate entry, alert the callback
+					if(err && err.code == 'ER_DUP_ENTRY') {
+						return callback({err: "duplicate"}, false);
+					} else if( err ) {
+						return callback ( err , null);
+					} else {
+						return callback(null, true);
+					}
+				});
 			}
 		});
 	});

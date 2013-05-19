@@ -58,3 +58,20 @@ exports.linkUserToProject = function(user_id, project_id, callback) {
 		});
 	});
 }
+
+exports.getProjectsForUser = function(user_id, callback) {
+	var params = [
+		user_id
+	]
+	mysql.getConnection(function( connection ) {
+		connection.query('SELECT * FROM User_Project NATURAL JOIN Project WHERE user_id = ?', params,
+		function(err, result) {
+			connection.end();
+			if( err ) {
+				return callback ( err , null);
+			} else {
+				return callback(null, result);
+			}
+		});
+	});
+}

@@ -19,7 +19,8 @@
 			}
 		});
 		$(".toolbar").on("click", ".sub .basegoal", function() {
-			var data = $(".toolbar form").serialize() + "&parent_id=" + parent_goal_id;
+			var data = $(".toolbar form").serialize() + "&parent_id=" + parent_goal_id 
+						+ "&project_id=" + window.project_id;
 			$.post("/ajax/toolbar/basegoal", data)
 			.success(function(result) {
 				window.location = window.location;

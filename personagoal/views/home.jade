@@ -1,15 +1,7 @@
 extends layout
-
 block content
-	-if (overdue)
-		.overdue-container
-			h1 Overdue Alert
-			!= overdue
-	-else
-		.overdue-container
-			h1 Great Job!
-			p(class='text-success well') No goals you own are overdue.
-	-if (goaltree)
-		.fullview-container
-			h1 Full View
-			!= goaltree
+	h1 Your Projects
+	.projects
+		each item in projects
+			.project.well
+				a(href="/user/project/#{item.project_id}") #{item.title}

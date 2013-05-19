@@ -1,0 +1,17 @@
+extends layout
+
+block content
+	script(type='text/javascript')
+		window.project_id = #{project_id}
+	-if (overdue)
+		.overdue-container
+			h1 Overdue Alert
+			!= overdue
+	-else
+		.overdue-container
+			h1 Great Job!
+			p(class='text-success well') No goals you own are overdue.
+	-if (goaltree)
+		.fullview-container
+			h1 Full View
+			!= goaltree
