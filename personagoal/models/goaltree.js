@@ -5,12 +5,11 @@ var dateFormat = require("dateformat");
 var prefix = "SELECT a.*, User_Goal.user_id, User_Detail.name FROM ( ";
 var postfix = ") AS a LEFT OUTER JOIN User_Goal AS User_Goal ON a.goal_id = User_Goal.goal_id LEFT OUTER JOIN User_Detail ON User_Goal.user_id = User_Detail.user_id ORDER BY a.goal_id";
 
-exports.getOverdueGoalsForUser = function(user_id, callback) {
-	var selectStatement = prefix + "SELECT * FROM `User_Goal` NATURAL JOIN `Goal` NATURAL JOIN Task WHERE due_date > 0 AND due_date < CURRENT_TIMESTAMP AND user_id=? AND completed_timestamp IS NULL" + postfix;
-	var params = [ user_id ];
-	console.log(selectStatement);
+exports.getOverdueGoalsForUser = function(user_id, project_id, callback) {
+	var selectStatement = prefix + "SELECT * FROM `User_Goal` NATURAL JOIN `Goal` NATURAL JOIN Goal_Project NATURAL JOIN Task WHERE due_date > 0 AND due_date < CURRENT_TIMESTAMP AND user_id=? AND completed_timestamp IS NULL AND project_id = ?" + postfix;
+	var params = [ user_id, project_id ];
 	mysql.getConnection(function(connection) {
-		connection.query(selectStatement, params, function(err, results) {
+		query = connection.query(selectStatement, params, function(err, results) {
 			connection.end();
 			if(err) { return callback(err, null); }
 			else {
@@ -22,11 +21,12 @@ exports.getOverdueGoalsForUser = function(user_id, callback) {
 	});
 }
 
-exports.getTreeForUser = function(user_id, callback) {
-	var selectStatements = "SELECT a.*, User_Goal.user_id, User_Detail.name FROM ( SELECT DISTINCT User_Goal.user_id, Goal.goal_id, title, due_date, NULL as parent_id, NULL as child_id, root, completed_timestamp FROM User_Goal JOIN Goal ON User_Goal.goal_id = Goal.goal_id LEFT OUTER JOIN GoalTreeChildren ON Goal.goal_id = GoalTreeChildren.goal_id OR Goal.goal_id = GoalTreeChildren.child_id JOIN Task ON Goal.task_id = Task.task_id WHERE User_Goal.user_id = ? UNION SELECT DISTINCT User_Goal.user_id, GoalTreeChildren.goal_id as goal_id, title, due_date, null as parent_id, GoalTreeChildren.child_id as child_id, root, completed_timestamp FROM User_Goal JOIN GoalTreeChildren ON User_Goal.goal_id = GoalTreeChildren.child_id JOIN Goal ON GoalTreeChildren.goal_id = Goal.goal_id JOIN Task ON Goal.task_id = Task.task_id WHERE User_Goal.user_id = ? UNION SELECT DISTINCT User_Goal.user_id, GoalTreeChildren.child_id as goal_id, title, due_date, GoalTreeChildren.goal_id as parent_id, null as child_id, root, completed_timestamp FROM User_Goal JOIN GoalTreeChildren ON User_Goal.goal_id = GoalTreeChildren.goal_id JOIN Goal ON GoalTreeChildren.child_id = Goal.goal_id JOIN Task ON Goal.task_id = Task.task_id WHERE User_Goal.user_id = ? ) as a LEFT OUTER JOIN User_Goal ON a.goal_id = User_Goal.goal_id LEFT OUTER JOIN User_Detail ON User_Goal.user_id = User_Detail.user_id ORDER BY goal_id";
-	var params = [ user_id, user_id, user_id ];
+exports.getTreeForUser = function(user_id, project_id, callback) {
+	//var selectStatements = "SELECT a.*, User_Goal.user_id, User_Detail.name FROM ( SELECT DISTINCT User_Goal.user_id, Goal.goal_id, title, due_date, NULL as parent_id, NULL as child_id, root, completed_timestamp FROM User_Goal JOIN Goal ON User_Goal.goal_id = Goal.goal_id LEFT OUTER JOIN GoalTreeChildren ON Goal.goal_id = GoalTreeChildren.goal_id OR Goal.goal_id = GoalTreeChildren.child_id JOIN Task ON Goal.task_id = Task.task_id WHERE User_Goal.user_id = ? UNION SELECT DISTINCT User_Goal.user_id, GoalTreeChildren.goal_id as goal_id, title, due_date, null as parent_id, GoalTreeChildren.child_id as child_id, root, completed_timestamp FROM User_Goal JOIN GoalTreeChildren ON User_Goal.goal_id = GoalTreeChildren.child_id JOIN Goal ON GoalTreeChildren.goal_id = Goal.goal_id JOIN Task ON Goal.task_id = Task.task_id WHERE User_Goal.user_id = ? UNION SELECT DISTINCT User_Goal.user_id, GoalTreeChildren.child_id as goal_id, title, due_date, GoalTreeChildren.goal_id as parent_id, null as child_id, root, completed_timestamp FROM User_Goal JOIN GoalTreeChildren ON User_Goal.goal_id = GoalTreeChildren.goal_id JOIN Goal ON GoalTreeChildren.child_id = Goal.goal_id JOIN Task ON Goal.task_id = Task.task_id WHERE User_Goal.user_id = ? ) as a LEFT OUTER JOIN User_Goal ON a.goal_id = User_Goal.goal_id LEFT OUTER JOIN User_Detail ON User_Goal.user_id = User_Detail.user_id ORDER BY goal_id";
+	var selectStatements = "SELECT a.*, User_Goal.user_id, User_Detail.name FROM ( SELECT DISTINCT Goal.goal_id, title, due_date, NULL as parent_id, NULL as child_id, root, completed_timestamp FROM User_Goal JOIN Goal_Project ON User_Goal.goal_id = Goal_Project.goal_id JOIN Goal ON User_Goal.goal_id = Goal.goal_id LEFT OUTER JOIN GoalTreeChildren ON Goal.goal_id = GoalTreeChildren.goal_id OR Goal.goal_id = GoalTreeChildren.child_id JOIN Task ON Goal.task_id = Task.task_id WHERE User_Goal.user_id = ? AND Goal_Project.project_id = ? UNION SELECT DISTINCT GoalTreeChildren.goal_id as goal_id, title, due_date, null as parent_id, GoalTreeChildren.child_id as child_id, root, completed_timestamp FROM User_Goal JOIN GoalTreeChildren ON User_Goal.goal_id = GoalTreeChildren.child_id JOIN Goal_Project ON GoalTreeChildren.goal_id = Goal_Project.goal_id JOIN Goal ON GoalTreeChildren.goal_id = Goal.goal_id JOIN Task ON Goal.task_id = Task.task_id WHERE User_Goal.user_id = ? AND Goal_Project.project_id = ? UNION SELECT DISTINCT GoalTreeChildren.child_id as goal_id, title, due_date, GoalTreeChildren.goal_id as parent_id, null as child_id, root, completed_timestamp FROM User_Goal JOIN GoalTreeChildren ON User_Goal.goal_id = GoalTreeChildren.goal_id JOIN Goal_Project ON GoalTreeChildren.child_id = Goal_Project.goal_id JOIN Goal ON GoalTreeChildren.child_id = Goal.goal_id JOIN Task ON Goal.task_id = Task.task_id WHERE User_Goal.user_id = ? AND Goal_Project.project_id = ? ) AS a LEFT OUTER JOIN User_Goal ON a.goal_id = User_Goal.goal_id LEFT OUTER JOIN User_Detail ON User_Goal.user_id = User_Detail.user_id ORDER BY a.goal_id";
+	var params = [ user_id, project_id, user_id, project_id, user_id, project_id ];
 	mysql.getConnection(function(connection) {
-		connection.query(selectStatements, params, function(err, results) {
+		var query = connection.query(selectStatements, params, function(err, results) {
 			connection.end();
 			if(err) { return callback(err, null); }
 			else {

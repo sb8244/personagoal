@@ -99,7 +99,7 @@ exports.linkGoalToParent = function(goal_id, parent_id, callback) {
 		}
 		var performInsertion = function(root, callback) {
 			params = [ parent_id, goal_id, root ];
-			var query = connection.query('INSERT INTO GoalTreeChildren(goal_id, child_id, root) VALUES(?,?,?)', params,
+			connection.query('INSERT INTO GoalTreeChildren(goal_id, child_id, root) VALUES(?,?,?)', params,
 			function(err, result) {
 				if(err) return callback(err, null);
 				else return callback(null, true);
@@ -124,7 +124,28 @@ exports.linkUserToGoal = function(user_id, goal_id, callback) {
 			connection.end();
 			//If there was a duplicate entry, alert the callback
 			if(err && err.code == 'ER_DUP_ENTRY') {
-				return callback({msg: "duplicate"}, null);
+				return callback({msg: "duplicate"}, false);
+			} else if( err ) {
+				return callback ( err , null);
+			} else {
+				return callback(null, true);
+			}
+		});
+	});
+}
+
+exports.linkGoalToProject = function(goal_id, project_id, callback) {
+	var params = [
+		goal_id,
+		project_id
+	];
+	mysql.getConnection(function( connection ) {
+		connection.query('INSERT INTO Goal_Project VALUES(?, ?)', params,
+		function(err, result) {
+			connection.end();
+			//If there was a duplicate entry, alert the callback
+			if(err && err.code == 'ER_DUP_ENTRY') {
+				return callback({err: "duplicate"}, false);
 			} else if( err ) {
 				return callback ( err , null);
 			} else {

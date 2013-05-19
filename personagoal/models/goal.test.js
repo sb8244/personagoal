@@ -43,7 +43,7 @@ exports.insert = {
 		goalProvider.linkUserToGoal(user_id, goal_id, function(err, result) {
 			test.equals(result, true, "Result should be true");
 			goalProvider.linkUserToGoal(user_id, goal_id, function(errInner, resultInner) {
-				test.equals(resultInner, null, "Result should be null");
+				test.equals(resultInner, false, "Result should be false");
 				test.equals(errInner.msg, "duplicate", "Error.msg should be duplicate");
 				test.notEqual(errInner, null, "Err should not be null");
 				mysql.getConnection(function( connection ) {
@@ -65,13 +65,13 @@ exports.goaltree = {
 			test.equals(err, null);
 			test.equals(result, true);
 			mysql.getConnection(function( connection ) {
-				params [ 1, 4, 1 ];
+				params = [ 1, 4, 1 ];
 				connection.query('SELECT * FROM GoalTreeChildren WHERE goal_id = ? AND child_id = ? AND root = ?', params,
 				function(err, result) {
 					test.equals(err, null);
 					test.equals(result.length, 1);
 					connection.query('DELETE FROM GoalTreeChildren WHERE goal_id = ? AND child_id = ? AND root = ?', params,
-					function(err2, result2) {
+					function(err2, result2) {;
 						test.equals(err, null);
 						connection.end();
 						test.done();
@@ -140,6 +140,47 @@ exports.completed = {
 						test.equals(err, null);
 						test.equals(result[0].completed_timestamp, null);
 						connection.end();
+						test.done();
+					});
+				});
+			});
+		});
+	}
+}
+
+exports.project = {
+	linkGoalToProjectValid: function(test) {
+		var goal_id = 0;
+		var project_id = 1;
+		goalProvider.linkGoalToProject(goal_id, project_id, function(err, result) {
+			test.equals(err, null);
+			test.equals(result, true);
+			mysql.getConnection(function( connection ) {
+				connection.query('DELETE FROM Goal_Project WHERE goal_id = ? AND project_id = ?', [goal_id, project_id],
+				function(err, result) {
+					connection.end();
+					test.equals(err, null);
+					test.equals(result.affectedRows, 1);
+					test.done();
+				});
+			});
+		});
+	},
+	linkGoalToProjectDuplicate: function(test) {
+		var goal_id = 0;
+		var project_id = 1;
+		goalProvider.linkGoalToProject(goal_id, project_id, function(err, result) {
+			test.equals(err, null);
+			test.equals(result, true);
+			goalProvider.linkGoalToProject(goal_id, project_id, function(err, result) {
+				test.notEqual(err, null);
+				test.equals(result, false);
+				mysql.getConnection(function( connection ) {
+					connection.query('DELETE FROM Goal_Project WHERE goal_id = ? AND project_id = ?', [goal_id, project_id],
+					function(err, result) {
+						connection.end();
+						test.equals(err, null);
+						test.equals(result.affectedRows, 1);
 						test.done();
 					});
 				});

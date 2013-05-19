@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: May 11, 2013 at 08:03 AM
+-- Generation Time: May 19, 2013 at 05:34 AM
 -- Server version: 5.5.29
 -- PHP Version: 5.4.6-1ubuntu1.2
 
@@ -14,67 +14,6 @@ SET time_zone = "+00:00";
 -- Database: `personagoal-test`
 --
 
-DELIMITER $$
---
--- Procedures
---
-CREATE DEFINER=`root`@`localhost` PROCEDURE `add`(IN input_parent_id INT, IN input_goal_id INT)
-    DETERMINISTIC
-    COMMENT 'Insert a goal_id into the nested set Nested_Goal'
-BEGIN  
-  SELECT @myRight := rgt FROM Nested_Goal WHERE goal_id = input_parent_id;
-
-  UPDATE Nested_Goal SET rgt = rgt + 2 WHERE rgt > @myRight;
-  UPDATE Nested_Goal SET lft = lft + 2 WHERE lft > @myRight;
-
-  INSERT INTO Nested_Goal(goal_id, lft, rgt) VALUES(input_goal_id, @myRight + 1, @myRight + 2);
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `add_goal_node`(IN input_parent_id INT, IN input_goal_id INT)
-    DETERMINISTIC
-    COMMENT 'Insert a goal_id into the nested set Nested_Goal'
-BEGIN  
-SET AUTOCOMMIT = 0; 
-START TRANSACTION; 
-
-SELECT @difference := rgt-lft  FROM Nested_Goal WHERE goal_id = input_parent_id;
-
-IF(@difference = 1) THEN
-  SELECT @myLeft := lft FROM Nested_Goal WHERE goal_id = input_parent_id;
-  UPDATE Nested_Goal SET rgt = rgt + 2 WHERE rgt > @myLeft;
-  UPDATE Nested_Goal SET lft = lft + 2 WHERE lft > @myLeft;
-  INSERT INTO Nested_Goal(goal_id, lft, rgt) VALUES(input_goal_id, @myLeft + 1, @myLeft + 2);
-ELSE
-  SELECT @myRight := rgt FROM Nested_Goal WHERE goal_id = input_parent_id;
-  UPDATE Nested_Goal SET rgt = rgt + 2 WHERE rgt > @myRight;
-  UPDATE Nested_Goal SET lft = lft + 2 WHERE lft > @myRight;
-  INSERT INTO Nested_Goal(goal_id, lft, rgt) VALUES(input_goal_id, @myRight + 1, @myRight + 2);
-END IF;
-
-COMMIT;
-END$$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `add_root_goal_node`(IN input_goal_id INT)
-    DETERMINISTIC
-    COMMENT 'Insert a goal_id into the nested set Nested_Goal'
-BEGIN  
-SET AUTOCOMMIT = 0; 
-START TRANSACTION; 
-
-SELECT @myLeft := lft FROM Nested_Goal
-
-WHERE goal_id = 0;
-
-UPDATE Nested_Goal SET rgt = rgt + 2 WHERE rgt > @myLeft;
-UPDATE Nested_Goal SET lft = lft + 2 WHERE lft > @myLeft;
-
-INSERT INTO Nested_Goal(goal_id, lft, rgt) VALUES(input_goal_id, @myLeft + 1, @myLeft + 2);
-
-COMMIT;
-END$$
-
-DELIMITER ;
-
 -- --------------------------------------------------------
 
 --
@@ -83,36 +22,35 @@ DELIMITER ;
 
 CREATE TABLE IF NOT EXISTS `Goal` (
   `goal_id` int(11) NOT NULL AUTO_INCREMENT,
-  `completed` tinyint(1) NOT NULL DEFAULT '0',
   `completed_timestamp` datetime DEFAULT NULL,
   `due_date` datetime NOT NULL,
   `task_id` int(11) NOT NULL,
   PRIMARY KEY (`goal_id`),
   UNIQUE KEY `task_id_2` (`task_id`),
   KEY `task_id` (`task_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=16 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=90 ;
 
 --
 -- Dumping data for table `Goal`
 --
 
-INSERT INTO `Goal` (`goal_id`, `completed`, `completed_timestamp`, `due_date`, `task_id`) VALUES
-(0, 0, NULL, '2013-05-06 08:00:00', 1),
-(1, 0, '2013-05-06 11:17:00', '2013-05-29 08:00:00', 2),
-(2, 0, NULL, '2013-04-05 11:17:00', 3),
-(3, 0, NULL, '0000-00-00 00:00:00', 4),
-(4, 0, NULL, '0000-00-00 00:00:00', 5),
-(5, 0, NULL, '0000-00-00 00:00:00', 6),
-(6, 0, NULL, '2013-05-01 00:00:00', 7),
-(7, 0, NULL, '0000-00-00 00:00:00', 8),
-(8, 0, NULL, '0000-00-00 00:00:00', 9),
-(9, 0, NULL, '0000-00-00 00:00:00', 10),
-(10, 0, NULL, '0000-00-00 00:00:00', 11),
-(11, 0, NULL, '0000-00-00 00:00:00', 12),
-(12, 0, NULL, '0000-00-00 00:00:00', 13),
-(13, 0, NULL, '0000-00-00 00:00:00', 14),
-(14, 0, NULL, '0000-00-00 00:00:00', 15),
-(15, 0, NULL, '2013-05-05 11:17:00', 16);
+INSERT INTO `Goal` (`goal_id`, `completed_timestamp`, `due_date`, `task_id`) VALUES
+(0, NULL, '2013-05-06 08:00:00', 1),
+(1, '2013-05-06 11:17:00', '2013-05-29 08:00:00', 2),
+(2, NULL, '2013-04-05 11:17:00', 3),
+(3, NULL, '0000-00-00 00:00:00', 4),
+(4, NULL, '0000-00-00 00:00:00', 5),
+(5, NULL, '0000-00-00 00:00:00', 6),
+(6, NULL, '2013-05-01 00:00:00', 7),
+(7, NULL, '0000-00-00 00:00:00', 8),
+(8, NULL, '0000-00-00 00:00:00', 9),
+(9, NULL, '0000-00-00 00:00:00', 10),
+(10, NULL, '0000-00-00 00:00:00', 11),
+(11, NULL, '0000-00-00 00:00:00', 12),
+(12, NULL, '0000-00-00 00:00:00', 13),
+(13, NULL, '0000-00-00 00:00:00', 14),
+(14, NULL, '0000-00-00 00:00:00', 15),
+(15, NULL, '2013-05-05 11:17:00', 16);
 
 -- --------------------------------------------------------
 
@@ -153,6 +91,61 @@ INSERT INTO `GoalTreeChildren` (`goal_id`, `child_id`, `root`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `Goal_Project`
+--
+
+CREATE TABLE IF NOT EXISTS `Goal_Project` (
+  `goal_id` int(11) NOT NULL,
+  `project_id` int(11) NOT NULL,
+  PRIMARY KEY (`goal_id`,`project_id`),
+  KEY `project_id` (`project_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `Goal_Project`
+--
+
+INSERT INTO `Goal_Project` (`goal_id`, `project_id`) VALUES
+(15, 0),
+(1, 1),
+(2, 1),
+(3, 1),
+(4, 1),
+(5, 1),
+(6, 1),
+(7, 1),
+(8, 1),
+(9, 1),
+(10, 1),
+(11, 1),
+(12, 1),
+(13, 1),
+(14, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Project`
+--
+
+CREATE TABLE IF NOT EXISTS `Project` (
+  `project_id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(100) NOT NULL,
+  `description` varchar(1024) DEFAULT NULL,
+  PRIMARY KEY (`project_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=82 ;
+
+--
+-- Dumping data for table `Project`
+--
+
+INSERT INTO `Project` (`project_id`, `title`, `description`) VALUES
+(0, 'Another Project', NULL),
+(1, 'Test Project - Do not Delete', 'This is a test project');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `Task`
 --
 
@@ -161,7 +154,7 @@ CREATE TABLE IF NOT EXISTS `Task` (
   `title` varchar(150) NOT NULL,
   `description` varchar(800) NOT NULL,
   PRIMARY KEY (`task_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=81 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=157 ;
 
 --
 -- Dumping data for table `Task`
@@ -200,7 +193,7 @@ CREATE TABLE IF NOT EXISTS `User` (
   `email` varchar(255) NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=173 ;
 
 --
 -- Dumping data for table `User`
@@ -279,6 +272,26 @@ INSERT INTO `User_Password` (`user_id`, `password`) VALUES
 (1, '5f4dcc3b5aa765d61d8327deb882cf99'),
 (2, '5f4dcc3b5aa765d61d8327deb882cf99');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `User_Project`
+--
+
+CREATE TABLE IF NOT EXISTS `User_Project` (
+  `user_id` int(11) NOT NULL,
+  `project_id` int(11) NOT NULL,
+  PRIMARY KEY (`user_id`,`project_id`),
+  KEY `project_id` (`project_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `User_Project`
+--
+
+INSERT INTO `User_Project` (`user_id`, `project_id`) VALUES
+(1, 1);
+
 --
 -- Constraints for dumped tables
 --
@@ -298,6 +311,13 @@ ALTER TABLE `GoalTreeChildren`
   ADD CONSTRAINT `GoalTreeChildren_ibfk_3` FOREIGN KEY (`root`) REFERENCES `Goal` (`goal_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `Goal_Project`
+--
+ALTER TABLE `Goal_Project`
+  ADD CONSTRAINT `Goal_Project_ibfk_2` FOREIGN KEY (`project_id`) REFERENCES `Project` (`project_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `Goal_Project_ibfk_1` FOREIGN KEY (`goal_id`) REFERENCES `Goal` (`goal_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `User_Detail`
 --
 ALTER TABLE `User_Detail`
@@ -315,3 +335,10 @@ ALTER TABLE `User_Goal`
 --
 ALTER TABLE `User_Password`
   ADD CONSTRAINT `User_Password_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `User_Project`
+--
+ALTER TABLE `User_Project`
+  ADD CONSTRAINT `User_Project_ibfk_2` FOREIGN KEY (`project_id`) REFERENCES `Project` (`project_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `User_Project_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `User` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;

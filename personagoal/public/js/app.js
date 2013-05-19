@@ -49,12 +49,19 @@
 			}
 		});
 		$(".highlight > input[type='checkbox']").change(function() {
-			var checked = $(this).is(":checked");
-			var goal_id = $(this).parent().data("id");
-			console.log("action=" + checked + "&goal_id=" + goal_id);
+			var item = $(this);
+			var checked = item.is(":checked");
+			var goal_id = item.parent().data("id");
 			$.post("/ajax/toolbar/markgoal", "action=" + checked + "&goal_id=" + goal_id)
 			.success(function(result) {
-				console.log(result);
+				if(result.success === true) {
+					var parent = item.parent().parent();
+					if(checked) {
+						parent.removeClass("complete-false").addClass("complete-true");						
+					} else {
+						parent.removeClass("complete-true").addClass("complete-false");	
+					}
+				}
 			}).fail(function(err) {
 				console.log(err);
 			});
