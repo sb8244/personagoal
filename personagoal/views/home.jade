@@ -3,5 +3,5 @@ block content
 	h1 Your Projects
 	.projects
 		each item in projects
-			.project.well
+			.project.well("data-project_id"=item.project_id)
 				a(href="/user/project/#{item.project_id}") #{item.title}

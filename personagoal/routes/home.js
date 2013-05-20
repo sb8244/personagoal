@@ -7,10 +7,10 @@ exports.index = function(req, res) {
 	var user_id = req.session.user_id;
 	projectProvider.getProjectsForUser(user_id, function(err, result) {
 		if(err) throw err;
-		console.log(result);
 		res.render('home', {
 				title: 'Projects',
-				projects: result
+				projects: result,
+				render_project_toolbar: true				
 		});
 	});
 }
@@ -44,7 +44,7 @@ exports.project = function(req, res) {
 				goaltree: results[0],
 				overdue: results[1],
 				project_id: project_id,
-				render_toolbar: true
+				render_goal_toolbar: true
 			});
 		}
 	});

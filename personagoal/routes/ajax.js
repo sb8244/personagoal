@@ -39,8 +39,16 @@ exports.markgoal = function(req, res) {
 }
 
 exports.basegoal = function(req, res) {
-	createUserSelect(function(html) {
+	var user_id = req.session.user_id;
+	createUserSelect(user_id, function(html) {
 		res.render('partials/newgoal', {user_select: html});
+	});
+}
+
+exports.newproject = function(req, res) {
+	var user_id = req.session.user_id;
+	createUserSelect(user_id, function(html) {
+		res.render('partials/newproject', {user_select: html});
 	});
 }
 
@@ -100,8 +108,7 @@ exports.basegoalprocess = function(req, res) {
 							}
 						], function(err, results) {
 							if(err) throw err;
-							res.send({title: title, users: users,
-									  due_date: due_date, parent_id: parent_id}, 200);
+							res.send("okay", 200);
 						});
 					}
 				});
@@ -111,11 +118,44 @@ exports.basegoalprocess = function(req, res) {
 	}
 }
 
-function createUserSelect(callback) {
+exports.newprojectprocess = function(req, res) {
+	var user_id = req.session.user_id;
+	req.assert('title', 'Invalid Title').notEmpty();
+	if(!Array.isArray(req.param('users'))) {
+		//this should fail everytime, sort of hacky
+		req.assert('users', 'Select Users').isAlpha().isNumeric();
+	}
+	var errors = req.validationErrors();
+	if (errors) {
+		res.send(errors, 500);
+		return;
+	} else {
+		var title = req.param('title');
+		var users = req.param('users');
+		projectProvider.createProject(title, function(err, project_id) {
+			if(err) throw err;
+			else {
+				async.each(users, function(user_id, callback) {
+					projectProvider.linkUserToProject(user_id, project_id, function(err, result) {
+						return callback(err);
+					})
+				}, function(err, results) {
+					if(err) throw err;
+						res.send("okay", 200);
+				});
+			}
+		});
+	}
+}
+
+function createUserSelect(user_id, callback) {
 	var html = "<select name='users[]' data-placeholder='Assign to users - Required' multiple='multiple' data-role='multiselect' size='1'>";
 	userProvider.listUsers(function(users) {
 		async.eachSeries(users, function(user, callback) {
-			html += "<option value='" + user.user_id + "'>" + user.name + "</option>";
+			if(user.user_id == user_id)
+				html += "<option value='" + user.user_id + "' selected='selected'>" + user.name + "</option>";
+			else
+				html += "<option value='" + user.user_id + "'>" + user.name + "</option>";
 			callback();
 		}, function() {
 			html += "</select>";

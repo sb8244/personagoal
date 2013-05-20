@@ -89,10 +89,13 @@
 			border-bottom: 1px solid #999;
 		}
 
+		.content > .wrap {
+			padding-top: 40px;
+		}
 		/*******************
 		 * PROJ CONTAINER  *
 		 *******************/
-		 .project {
+		 .projects > .project {
 		 	float:left ;
 		 	margin: 20px 40px 20px 0px;
 		 }
@@ -132,6 +135,9 @@
 		 	color: #3a87ad;
 		 	cursor: pointer;
 		 }
+		 .pointer {
+		 	cursor: pointer;
+		 }
 		 /********************
 		 *      TOOLBAR      *
 		 ********************/
@@ -151,8 +157,13 @@
 		 	margin-right: 15px;
 		 }
 		 .toolbar .close {
-		 	line-height: 80px;
 		 	padding-right: 20px;
+		 }
+		 .toolbar .close.large {
+		 	line-height: 80px;
+		 }
+		 .toolbar .close.small {
+		 	line-height: 40px;
 		 }
 		 .toolbar form {
 		 	margin: 0px;
@@ -164,12 +175,17 @@
 		 .toolbar input {
 		 	margin-bottom: 0px;
 		 }
-		 .toolbar > .sub .basegoal {
+		 .toolbar > .sub .btn {
 		 	margin-left: 7px;
 		 }
 		 .fullview-container .highlight.on {
 		 	background: yellow;
 		 	cursor: pointer;
+		 }
+		 .icon-ban-circle.offset {
+		 	position: relative;
+			top: -20px;
+			left: -16px;
 		 }
 
 		/*

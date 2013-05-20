@@ -15,8 +15,13 @@ include partials/head
 		span.bigger.padded-left #{title}
 	.body-clear
 	.content
-		-if (typeof(render_toolbar) !== 'undefined') {
-			.toolbar
-				include partials/toolbar
+		-if (typeof(render_goal_toolbar) !== 'undefined') {
+		.toolbar
+			include partials/toolbar
 		-}
-		block content
+		-if (typeof(render_project_toolbar) !== 'undefined') {
+		.toolbar
+			include partials/project_toolbar
+		-}
+		.wrap
+			block content

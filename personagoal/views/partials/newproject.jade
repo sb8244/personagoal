@@ -1,0 +1,9 @@
+div(class='sub clearfix hide')
+	div
+		button(type='button', class='close pull-left small', data-dismiss='alert') &times;
+		form(method='post', class="pull-left")
+			div
+				input(type="text",class="input-xlarge",placeholder="Project title - Required",name="title")
+				-if(user_select)
+					!= user_select
+				span(class='btn btn-inverse project') Add

@@ -32,6 +32,8 @@ exports.define = function( app )
 	app.get("/ajax/toolbar/basegoal", ajax.basegoal);
 	app.post("/ajax/toolbar/basegoal", ajax.basegoalprocess);
 	app.post("/ajax/toolbar/markgoal", ajax.markgoal);
+	app.get("/ajax/toolbar/project", ajax.newproject);
+	app.post("/ajax/toolbar/project", ajax.newprojectprocess);
 }
 
 var disallowAuthenticatedUsers = function(req, res, next) {
