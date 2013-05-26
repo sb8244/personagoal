@@ -5,7 +5,7 @@
 
 global.testing = false;
 global.debug = false;
-global.user_id = 1;
+//global.user_id = 1;
 var router = require("./router");
 var express = require('express')
   , http = require('http')

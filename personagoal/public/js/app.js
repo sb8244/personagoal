@@ -109,10 +109,11 @@
 				catchNextClick = false;
 				$(".projects > .project").removeClass("pointer");
 				var project_id = $(event.target).data("project_id");
+				var title = $(event.target).children("a").text();
 				if(project_id != undefined) {
 					event.preventDefault();
 					$.confirm({
-						text: "Are you sure you want to delete this project?",
+						text: "Are you sure you want to delete this project and all goals in it:<br><b>" + title + "</b>?",
 						confirm: function(button) {
 							console.log(project_id);
 						},
