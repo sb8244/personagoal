@@ -34,7 +34,7 @@
 		.left-sticky > .top {
 			background: white;
 		}
-		.left-sticky > .top > img {
+		.left-sticky > .top > a > img {
 			height: 40px;
 			display:block;
 			margin: 0 auto;

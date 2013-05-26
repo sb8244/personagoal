@@ -112,10 +112,18 @@
 				var title = $(event.target).children("a").text();
 				if(project_id != undefined) {
 					event.preventDefault();
+					var text = "Are you sure you want to delete this project and all goals in it:<b>" + title + "</b>?";
+					text += "<br><br>Again, all goals related to this project will be gone forever. <b>This is not reversable.</b>";
 					$.confirm({
-						text: "Are you sure you want to delete this project and all goals in it:<br><b>" + title + "</b>?",
+						text: text,
 						confirm: function(button) {
-							console.log(project_id);
+							var data = "project_id="+project_id;
+							$.post("/ajax/toolbar/deleteproject", data)
+							.success(function(result) {
+								window.location = window.location;
+							}).fail(function(err) {
+								console.log(err);
+							});
 						},
 						cancel:function(button) {
 							console.log("no");

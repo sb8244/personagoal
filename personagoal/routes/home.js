@@ -8,7 +8,7 @@ exports.index = function(req, res) {
 	projectProvider.getProjectsForUser(user_id, function(err, result) {
 		if(err) throw err;
 		res.render('home', {
-				title: 'Projects',
+				title: 'Home',
 				projects: result,
 				render_project_toolbar: true				
 		});

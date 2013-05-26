@@ -45,13 +45,6 @@ exports.basegoal = function(req, res) {
 	});
 }
 
-exports.newproject = function(req, res) {
-	var user_id = req.session.user_id;
-	createUserSelect(user_id, function(html) {
-		res.render('partials/newproject', {user_select: html});
-	});
-}
-
 exports.basegoalprocess = function(req, res) {
 	var user_id = req.session.user_id;
 	req.assert('title', 'Invalid Title').notEmpty();
@@ -118,6 +111,13 @@ exports.basegoalprocess = function(req, res) {
 	}
 }
 
+exports.newproject = function(req, res) {
+	var user_id = req.session.user_id;
+	createUserSelect(user_id, function(html) {
+		res.render('partials/newproject', {user_select: html});
+	});
+}
+
 exports.newprojectprocess = function(req, res) {
 	var user_id = req.session.user_id;
 	req.assert('title', 'Invalid Title').notEmpty();
@@ -141,9 +141,25 @@ exports.newprojectprocess = function(req, res) {
 					})
 				}, function(err, results) {
 					if(err) throw err;
-						res.send("okay", 200);
+					res.send("okay", 200);	
 				});
 			}
+		});
+	}
+}
+
+exports.deleteProject = function(req, res) {
+	var user_id = req.session.user_id;
+	req.assert('project_id', 'Invalid Project ID').notEmpty().isNumeric();
+	var errors = req.validationErrors();
+	if (errors) {
+		res.send(errors, 500);
+		return;
+	} else {
+		var project_id = req.param('project_id');
+		projectProvider.deleteProject(project_id, user_id, function(err, result) {
+			if(err) throw err;
+			res.send("okay", 200);
 		});
 	}
 }
